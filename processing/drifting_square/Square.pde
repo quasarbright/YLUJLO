@@ -1,6 +1,10 @@
 class Square{
   PVector position;
   PVector velocity;
+  float w;
+  float h;
+  color c;
+  
   Square(){
     
   }
@@ -18,6 +22,7 @@ class Square{
   }
   
   void show(){
-    
+    fill(c);
+    rect(position.x, position.y, w, h);
   }
 }
