@@ -1,12 +1,12 @@
-int popsize = 1000;
+int popsize = 5000;
 Particle[] particles;
 void setup(){
   size(800,800);
+  colorMode(HSB);
   particles = new Particle[popsize];
   for(int i = 0; i < popsize; i++){
     particles[i] = new Particle();
   }
-  colorMode(HSB);
   strokeWeight(1);
 }
 

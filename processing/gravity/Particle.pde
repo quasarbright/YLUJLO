@@ -1,5 +1,5 @@
 float g = 1;
-float maxVel = 10;
+float maxVel = 100;
 
 class Particle{
   PVector position, velocity, acceleration;
@@ -14,9 +14,7 @@ class Particle{
   
   PVector calcForce(PVector target){
     PVector disp = PVector.sub(target, position);
-    float magsq = disp.magSq();
-    float fmag = g/magsq;
-    PVector force = disp.copy().setMag(fmag);
+    PVector force = disp.copy().setMag(g);
     return force;
   }
   
@@ -28,6 +26,7 @@ class Particle{
   }
   
   void update(){
+    velocity.limit(maxVel);
     pullTo();
     position.add(velocity);
     velocity.add(acceleration);
@@ -36,6 +35,11 @@ class Particle{
     // add velocity to position
     // add acceleration to velocity
     // limit velocity
+  }
+  
+  void checkBounds(){
+    position.x = constrain(position.x, 0, width);
+    position.y = constrain(position.y, 0, height);
   }
   
   void show(){
