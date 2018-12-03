@@ -1,5 +1,5 @@
 float g = 1;
-float maxVel = 100;
+float maxVel = 20;
 
 class Particle{
   PVector position, velocity, acceleration;

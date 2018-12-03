@@ -1,4 +1,4 @@
-int popsize = 5000;
+int popsize = 10000;
 Particle[] particles;
 void setup(){
   size(800,800);
@@ -7,7 +7,7 @@ void setup(){
   for(int i = 0; i < popsize; i++){
     particles[i] = new Particle();
   }
-  strokeWeight(1);
+  strokeWeight(2);
 }
 
 void draw(){
