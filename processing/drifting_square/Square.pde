@@ -6,7 +6,7 @@ class Square{
   color c;
   Square(){
     position = new PVector(200, 200);
-    velocity = new PVector(17, 23);
+    velocity = new PVector(1, 1.5);
     w = 30;
     h = 30;
     colorMode(HSB);
@@ -21,13 +21,14 @@ class Square{
   }
   
   void checkBounds(){
-    if((position.x == width) || (position.x == 0)) {
+    if((position.x >= width - w) || (position.x <= 0)) {
       velocity.x = -1 * velocity.x;
+      changeColor();
     }
-    if((position.y == width) || (position.y == 0)) {
+    if((position.y >= height - h) || (position.y <= 0)) {
       velocity.y = -1 * velocity.y;
+      changeColor();
     }
-    changeColor();
     
   }
   
