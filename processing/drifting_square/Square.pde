@@ -4,7 +4,6 @@ class Square{
   float w;
   float h;
   color c;
-
   Square(){
     position = new PVector(200, 200);
     velocity = new PVector(17, 23);
@@ -12,15 +11,15 @@ class Square{
     h = 30;
     colorMode(HSB);
     c = color(random(255), 255, 255);
-
+    
   }
-
+  
   void update(){
     position.add(velocity);
     checkBounds();
-
+    
   }
-
+  
   void checkBounds(){
     if((position.x == width) || (position.x == 0)) {
       velocity.x = -1 * velocity.x;
@@ -29,14 +28,14 @@ class Square{
       velocity.y = -1 * velocity.y;
     }
     changeColor();
-
+    
   }
-
+  
   void changeColor(){
     c = color(random(255), 255, 255);
-
+    
   }
-
+  
   void show(){
     fill(c);
     rect(position.x, position.y, w, h);
