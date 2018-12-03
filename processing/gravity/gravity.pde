@@ -7,7 +7,7 @@ void setup(){
   for(int i = 0; i < popsize; i++){
     particles[i] = new Particle();
   }
-  strokeWeight(2);
+  strokeWeight(1);
 }
 
 void draw(){
