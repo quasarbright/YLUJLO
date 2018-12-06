@@ -4,16 +4,20 @@ class Graph{
   ArrayList<PVector> unreached;
   Graph(ArrayList<PVector> ps){
     points = ps;
+    reset();
+  }
+
+  void reset(){
     for(PVector v: points){
       unreached.add(v.copy());
     }
     reached.add(unreached.remove(0));
   }
-  
-  float getEdge(int i, int j){
-    return PVector.sub(points.get(i), points.get(j)).magSq();
+
+  float getEdge(int rind, int urind){
+    return PVector.sub(reached.get(rind), unreached.get(urind)).magSq();
   }
-  
+
   void prim(){
     reset();
     int closestUR;
@@ -33,7 +37,7 @@ class Graph{
     line(UR.x, UR.y, R.x, R.y);
     reached.add(unreached.remove(closestUR));
   }
-  
+
   void show(){
     for(PVector v: points){
       ellipse(v.x, v.y, 5, 5);
