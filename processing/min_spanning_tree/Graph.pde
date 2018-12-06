@@ -4,6 +4,10 @@ class Graph{
   ArrayList<PVector> unreached;
   Graph(ArrayList<PVector> ps){
     points = ps;
+    reset();
+  }
+  
+  void reset(){
     for(PVector v: points){
       unreached.add(v.copy());
     }
@@ -17,9 +21,6 @@ class Graph{
   void show(){
     for(PVector v: points){
       ellipse(v.x, v.y, 5, 5);
-      for(PVector u: points){
-        line(v.x, v.y, u.x, u.y);
-      }
     }
   }
 }
