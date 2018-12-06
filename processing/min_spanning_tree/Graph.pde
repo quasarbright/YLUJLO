@@ -37,7 +37,6 @@ class Graph {
       }
       PVector UR = unreached.get(closestUR);
       PVector R = reached.get(closestR);
-      println(closestUR);
       line(UR.x, UR.y, R.x, R.y);
       reached.add(unreached.remove(closestUR));
     }
