@@ -1,10 +1,16 @@
+import peasy.*;
+
+PeasyCam cam;
+
 Graph g;
-int popsize = 100;
+int popsize = 1;
+boolean shouldSpawn = true;
 void setup(){
-  size(800,800);
+  fullScreen(P3D);
+  cam = new PeasyCam(this, 2500);
   ArrayList<PVector> points = new ArrayList<PVector>();
   for(int i = 0; i < popsize; i++){
-    points.add(new PVector(random(width), random(height)));
+    points.add(randomVector());
   }
   g = new Graph(points);
   stroke(255);
@@ -12,13 +18,26 @@ void setup(){
   strokeWeight(2);
 }
 
-void draw(){
-  background(0);
-  g.show();
-  g.prim();
+PVector randomVector(){
+  return new PVector(random(-height, height), random(-height, height), random(-height, height)).limit(height);
 }
 
-void mousePressed(){
-  g.points.add(new PVector(mouseX, mouseY));
-  g.reset();
+void draw(){
+  background(0);
+  rotateY(millis()/1000.0);
+  rotateX(.5*millis()/1000.0);
+  rotateZ(-.25*millis()/1000.0);
+  g.show();
+  g.prim();
+  if(frameCount % 6 == 0 && shouldSpawn){
+    g.points.add(randomVector());
+  }
+}
+
+void keyPressed(){
+  if(key == ' '){
+    g.points.add(randomVector());
+  } else {
+    shouldSpawn = !shouldSpawn;
+  }
 }

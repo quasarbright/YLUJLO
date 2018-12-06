@@ -37,14 +37,17 @@ class Graph {
       }
       PVector UR = unreached.get(closestUR);
       PVector R = reached.get(closestR);
-      line(UR.x, UR.y, R.x, R.y);
+      line(UR.x, UR.y, UR.z, R.x, R.y, R.z);
       reached.add(unreached.remove(closestUR));
     }
   }
 
   void show() {
     for (PVector v : points) {
-      ellipse(v.x, v.y, 5, 5);
+      pushMatrix();
+      translate(v.x, v.y, v.z);
+      sphere(5);
+      popMatrix();
     }
   }
 }
