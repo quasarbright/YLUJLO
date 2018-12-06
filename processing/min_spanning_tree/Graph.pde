@@ -14,9 +14,10 @@ class Graph{
     reached.add(unreached.remove(0));
   }
   
-  float getEdge(int i, int j){
-    return PVector.sub(points.get(i), points.get(j)).magSq();
+  float getEdge(int rind, int urind){
+    return PVector.sub(reached.get(rind), unreached.get(urind)).magSq();
   }
+  
   
   void show(){
     for(PVector v: points){
