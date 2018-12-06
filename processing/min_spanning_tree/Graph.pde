@@ -14,12 +14,29 @@ class Graph{
     return PVector.sub(points.get(i), points.get(j)).magSq();
   }
   
+  void prim(){
+    reset();
+    int closestUR;
+    int closestR;
+    float minDist = 3.40282347E+38;
+    for(int ri = 0; ri < reached.length(); ri++){
+      for(int ui = 0; ui < unreached.length(); ui++) {
+        if(getEdge(ri, ui) < minDist) {
+          minDist = getEdge(ri, ui);
+          closestUR = ui;
+          closestR = ri;
+        }
+      }
+    }
+    PVector UR = unreached.get(closestUR);
+    PVector R = reached.get(closestR);
+    line(UR.x, UR.y, R.x, R.y);
+    reached.add(unreached.remove(closestUR));
+  }
+  
   void show(){
     for(PVector v: points){
       ellipse(v.x, v.y, 5, 5);
-      for(PVector u: points){
-        line(v.x, v.y, u.x, u.y);
-      }
     }
   }
 }
