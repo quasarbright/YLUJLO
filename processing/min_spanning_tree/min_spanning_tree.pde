@@ -2,7 +2,7 @@ Graph g;
 int popsize = 100;
 void setup(){
   size(800,800);
-  ArrayList<PVector> points = new ArrayList<>();
+  ArrayList<PVector> points = new ArrayList<PVector>();
   for(int i = 0; i < popsize; i++){
     points.add(new PVector(random(width), random(height)));
   }
