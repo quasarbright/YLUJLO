@@ -1,6 +1,5 @@
 Graph g;
 int popsize = 100;
-void setup(){
   size(800,800);
   ArrayList<PVector> points = new ArrayList<PVector>();
   for(int i = 0; i < popsize; i++){
