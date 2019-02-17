@@ -69,13 +69,13 @@ class SuperShape implements PolarFunc{
     // not rings
     int index = floor(map(2+sin(theta)+sin(phi), 0, 4, bands/4, bands/3));
     // rings
-    //int index = floor(map(phi, 0, PI, bands/4, bands/3));
+    // int index = floor(map(phi, 0, PI, bands/4, bands/3));
     // slices
-    //int index = floor(map(1+sin(theta), 0, 2, bands/4, bands/3));
-    //println(index, phi);
+    // int index = floor(map(1+sin(theta), 0, 2, bands/4, bands/3));
+    // println(index, phi);
     float amplitude = spectrum[index];
-    //println(amplitude);
+    // println(amplitude);
     return 100 + 1000 * sqrt(amplitude);
-    //return 1 * supershape(theta, 1.01, 0.2, 1.7, 10.7) * (supershape(phi, 5, 0.5, 10.6, 1.7)) + 1000 * sqrt(amplitude);
+    // return 1 * supershape(theta, 1.01, 0.2, 1.7, 10.7) * (supershape(phi, 5, 0.5, 10.6, 1.7)) + 1000 * sqrt(amplitude);
   }
 }

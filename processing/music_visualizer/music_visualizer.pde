@@ -42,6 +42,4 @@ void draw() {
   //// draw the line for frequency band i scaling it up by 5 to get more amplitude.
   //line( i, height, i, height - spectrum[i]*height*5 );
   //}
-  
-  
 }
