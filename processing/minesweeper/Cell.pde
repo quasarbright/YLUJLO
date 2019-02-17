@@ -61,10 +61,12 @@ class Safe extends Cell {
     //noStroke();
     //fill(0,0);
     //rect(pos.x, pos.y, cellSize, cellSize);
-    fill(240);
-    textSize(15);
-    textAlign(CENTER, CENTER);
-    text("" + numBombs, pos.x + cellSize * 0.5, pos.y + cellSize * 0.4);
+    if (numBombs != 0) {
+      fill(240);
+      textSize(15);
+      textAlign(CENTER, CENTER);
+      text("" + numBombs, pos.x + cellSize * 0.5, pos.y + cellSize * 0.4);
+    }
     popMatrix();
   }
 }
