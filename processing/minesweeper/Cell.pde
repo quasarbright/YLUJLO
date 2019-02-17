@@ -5,7 +5,12 @@ abstract class Cell {
   
   abstract void drawAt(PVector pos);
   abstract void expose();
-  abstract void flag();
+  
+  void flag() {
+    if(!this.exposed){
+      this.flagged = !this.flagged;
+    }
+  }
 }
 
 class Mine extends Cell {
@@ -20,17 +25,15 @@ class Mine extends Cell {
     this.exposed = true;
     println("game over");
   }
-  
-  void flag() {
-    if(!this.exposed){
-      this.flagged = !this.flagged;
-    }
-  }
 }
 
 class Safe extends Cell {
   int numBombs;
   Safe(int numBombs){
     this.numBombs = numBombs;
+  }
+  
+  void expose() {
+    this.exposed = true;
   }
 }
