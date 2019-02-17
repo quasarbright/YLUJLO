@@ -29,5 +29,8 @@ class Mine extends Cell {
 }
 
 class Safe extends Cell {
-  
+  int numBombs;
+  Safe(int numBombs){
+    this.numBombs = numBombs;
+  }
 }
