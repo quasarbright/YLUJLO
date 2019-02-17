@@ -1,4 +1,3 @@
-int cellSize = 20;
 abstract class Cell {
   boolean flagged = false;
   boolean exposed = false;
