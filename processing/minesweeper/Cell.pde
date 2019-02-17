@@ -31,11 +31,12 @@ abstract class Cell {
 class Mine extends Cell {
   void drawExposed(PVector pos) {
     pushMatrix();
+    noStroke();
     fill(210,0,0);
     rect(pos.x, pos.y, cellSize, cellSize);
     fill(0,0,0);
     ellipse(pos.x + cellSize / 2, pos.y + cellSize / 2,
-      cellSize * 5 / 8, cellSize * 5 / 8);
+      cellSize * 1 /3 , cellSize * 1 / 3);
     popMatrix();
   }
 
