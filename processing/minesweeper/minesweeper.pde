@@ -1,6 +1,6 @@
 World world;
 int numMines = 10;
-int cellSize = 10;
+int cellSize = 20;
 void setup() {
   size(500,500);
   world = new World(5, 5, 10);

@@ -11,6 +11,12 @@ abstract class Cell {
       this.flagged = !this.flagged;
     }
   }
+  
+  void drawAt(PVector pos) {
+    if (this.flagged) drawFlagged(pos);
+    else if (this.exposed) drawExposed(pos);
+    else drawUnexposed(pos);
+  }
 
   void drawFlagged(PVector pos) {
     fill(230, 230, 50);
