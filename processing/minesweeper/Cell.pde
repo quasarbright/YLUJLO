@@ -42,6 +42,7 @@ class Mine extends Cell {
       cellSize * 1 /3 , cellSize * 1 / 3);
     popMatrix();
   }
+  
 }
 
 class Safe extends Cell {
