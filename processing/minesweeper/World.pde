@@ -158,7 +158,6 @@ class World {
       this.show();
       textAlign(CENTER, CENTER);
       text("You Lost!", 250, 250);
-      while true {}
     }
     else {
       Safe cellCopy = (Safe) cells[y][x];
@@ -173,7 +172,7 @@ class World {
   //expose this cell and all non-flagged neighboring cells
   void bigExpose(int x, int y) {
     expose(x,y);
-    for PVector pos: getNeighborPositions(x, y) {
+    for (PVector pos: getNeighborPositions(x, y)) {
       expose(pos.x, pos.y);
     }
   }
