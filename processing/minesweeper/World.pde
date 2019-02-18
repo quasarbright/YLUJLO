@@ -124,6 +124,7 @@ class World {
       }
     }
     if (gameOver) {
+      fill(240);
       textAlign(CENTER, CENTER);
       PFont font;
       font = loadFont("Monaco-48.vlw");
