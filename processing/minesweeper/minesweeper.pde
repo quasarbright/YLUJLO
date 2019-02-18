@@ -14,7 +14,6 @@ void draw() {
   stroke(51);
   strokeWeight(5);
   fill(240);
-  world.exposeAll();
   world.show();
 }
 
@@ -27,7 +26,7 @@ void mouseClicked() {
   if(keyPressed){
     if(keyCode == CONTROL){
       world.onClick(p, Actions.FLAG);
-    } else if(keyCode == ALT){
+    } else if(keyCode == SHIFT){
       world.onClick(p, Actions.BIGEXPOSE);
     }
   } else {
