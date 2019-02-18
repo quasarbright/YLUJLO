@@ -41,7 +41,6 @@ class Mine extends Cell {
 
   void expose() {
     this.exposed = true;
-    println("game over");
   }
 }
 

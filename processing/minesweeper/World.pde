@@ -18,11 +18,12 @@ class World {
   
   void makeMines() {
     ArrayList<PVector> minePositions = new ArrayList<PVector>();
-    while(minePositions.size() < numMines) {
+    while(minePositions.size() < this.numMines) {
       int x = floor(random(this.w));
       int y = floor(random(this.h));
       PVector p = new PVector(x,y);
       if(minePositions.indexOf(p) == -1){
+        minePositions.add(p);
         cells[y][x] = new Mine();
       }
     }
@@ -55,23 +56,24 @@ class World {
     xs.add(x);
     ys.add(y);
     if(x > 0){
-      xs.add(x+1);
-      if(x < this.w-1){
+      xs.add(x-1);
+    }
+    if(x < this.w-1){
         xs.add(x+1);
       }
-    }
     if(y > 0){
       ys.add(y-1);
-      if(y < this.h-1){
+    }
+    if(y < this.h-1){
         ys.add(y+1);
       }
-    }
     for(int x_:xs){
       for(int y_:ys){
-        if(x_ != y_)
+        if(x_ != x || y_!=y)
           neighbors.add(cells[y_][x_]);
       }
     }
+    print(x, y, xs, ys);
     return neighbors;
   }
   
