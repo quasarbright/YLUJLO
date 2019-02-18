@@ -3,12 +3,15 @@ abstract class Cell {
   boolean exposed = false;
 
   abstract void drawExposed(PVector pos);
-  abstract void expose();
 
   void flag() {
     if(!this.exposed){
       this.flagged = !this.flagged;
     }
+  }
+  
+  void expose() {
+    if(!flagged) this.exposed = true;
   }
   
   void drawAt(PVector pos) {
@@ -39,20 +42,12 @@ class Mine extends Cell {
       cellSize * 1 /3 , cellSize * 1 / 3);
     popMatrix();
   }
-
-  void expose() {
-    this.exposed = true;
-  }
 }
 
 class Safe extends Cell {
   int numBombs;
   Safe(int numBombs){
     this.numBombs = numBombs;
-  }
-
-  void expose() {
-    this.exposed = true;
   }
 
   void drawExposed(PVector pos) {

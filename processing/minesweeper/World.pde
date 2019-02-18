@@ -154,6 +154,10 @@ class World {
       while true {}
     }
     else {
+      Safe cellCopy = (Safe) cells[y][x];
+      if (cellCopy.numBombs == 0) {
+        flood(x, y);
+      }
       cells[y][x].expose();
       this.show();
     }
@@ -161,7 +165,10 @@ class World {
   
   //expose this cell and all non-flagged neighboring cells
   void bigExpose(int x, int y) {
-    
+    expose(x,y);
+    for PVector pos: getNeighborPositions(x, y) {
+      expose(pos.x, pos.y);
+    }
   }
   
   void flood(int x, int y) { // check exposed for termination
