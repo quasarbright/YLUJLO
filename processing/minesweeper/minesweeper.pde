@@ -21,3 +21,16 @@ void draw() {
 enum Actions {
   EXPOSE, FLAG, BIGEXPOSE;
 }
+
+void mouseClicked() {
+  PVector p = new PVector(mouseX, mouseY);
+  if(keyPressed){
+    if(keyCode == CONTROL){
+      world.onClick(p, Actions.FLAG);
+    } else if(keyCode == ALT){
+      world.onClick(p, Actions.BIGEXPOSE);
+    }
+  } else {
+    world.onClick(p, Actions.EXPOSE);
+  }
+}

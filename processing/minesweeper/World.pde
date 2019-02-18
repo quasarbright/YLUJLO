@@ -136,7 +136,14 @@ class World {
   
   // vector in pixel space
   void onClick(PVector mousePosition, Actions action) {
-    
+    int x, y;
+    x = (int) (mousePosition.x / cellSize);
+    y = (int) (mousePosition.y / cellSize);
+    switch(action){
+      case FLAG: this.flag(x, y); break;
+      case EXPOSE: this.expose(x, y); break;
+      case BIGEXPOSE: this.bigExpose(x, y); break;
+    }
   }
   
   void flag(int x, int y){
@@ -154,6 +161,20 @@ class World {
   }
   
   void flood(int x, int y) { // check exposed for termination
-    
+    Cell cell = this.cells[y][x];
+    if(cell instanceof Safe){
+      this.cells[y][x].expose();
+      Safe safe = (Safe) cell;
+      if(safe.numBombs == 0){
+        ArrayList<PVector> neighborPositions = this.getNeighborPositions(x, y);
+        for(PVector p:neighborPositions){
+          int x2, y2;
+          x2 = floor(p.x);
+          y2 = floor(p.y);
+          if(!cells[y2][x2].exposed)
+            this.flood(floor(p.x), floor(p.y));
+        }
+      }
+    }
   }
 }
