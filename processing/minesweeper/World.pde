@@ -125,8 +125,8 @@ class World {
     }
     if (gameOver) {
       pushMatrix();
-      fill(240);
-      stroke(240);
+      fill(0);
+      stroke(0);
       textAlign(CENTER, CENTER);
       PFont font;
       font = loadFont("Monaco-48.vlw");
