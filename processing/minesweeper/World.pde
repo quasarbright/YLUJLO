@@ -70,7 +70,7 @@ class World {
     for(int x_:xs){
       for(int y_:ys){
         if(x_ != x || y_!=y)
-          neighborPositions.add(new PVector(x, y));
+          neighborPositions.add(new PVector(x_, y_));
       }
     }
     return neighborPositions;
@@ -188,8 +188,9 @@ class World {
           int x2, y2;
           x2 = floor(p.x);
           y2 = floor(p.y);
-          if(!cells[y2][x2].exposed)
+          if(!cells[y2][x2].exposed){
             this.flood(x2, y2);
+          }
         }
       }
     }
