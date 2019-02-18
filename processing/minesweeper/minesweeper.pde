@@ -1,10 +1,12 @@
 World world;
-int numMines = 10;
-int cellSize = 50;
+int numMines;
+int cellSize;
 void setup() {
   size(500,500);
-  world = new World(5, 5, 10);
-  cellSize = width/5;
+  int worldSize = 16;
+  numMines = floor(worldSize*worldSize * .2);
+  world = new World(worldSize, worldSize, numMines);
+  cellSize = width/worldSize;
 }
 
 void draw() {
@@ -12,9 +14,6 @@ void draw() {
   stroke(51);
   strokeWeight(5);
   fill(240);
-  //PVector pos = new PVector(250, 250);
-  //int cellSize = 20;
-  //int numBombs = 5;
   world.exposeAll();
   world.show();
 }
