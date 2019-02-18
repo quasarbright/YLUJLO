@@ -62,7 +62,7 @@ class Safe extends Cell {
       fill(240);
       textFont(font, 20 * cellSize / 50);
       textAlign(CENTER, CENTER);
-      text("" + numBombs, pos.x + cellSize * 0.5, pos.y + cellSize * 0.4);
+      text("" + numBombs, pos.x + cellSize * 0.5, pos.y + cellSize * 0.5);
     }
     popMatrix();
   }
