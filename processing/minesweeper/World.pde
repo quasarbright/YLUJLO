@@ -147,17 +147,35 @@ class World {
   }
   
   void flag(int x, int y){
-    
+    cells[y][x].flag();
+    this.show();
   }
   
   //expose only that cell (and possibly trigger flood)
   void expose(int x, int y) {
-    
+    if(cells[y][x] instanceof Mine) {
+      exposeAll();
+      this.show();
+      textAlign(CENTER, CENTER);
+      text("You Lost!", 250, 250);
+      while true {}
+    }
+    else {
+      Safe cellCopy = (Safe) cells[y][x];
+      if (cellCopy.numBombs == 0) {
+        flood(x, y);
+      }
+      cells[y][x].expose();
+      this.show();
+    }
   }
   
   //expose this cell and all non-flagged neighboring cells
   void bigExpose(int x, int y) {
-    
+    expose(x,y);
+    for PVector pos: getNeighborPositions(x, y) {
+      expose(pos.x, pos.y);
+    }
   }
   
   void flood(int x, int y) { // check exposed for termination
