@@ -56,8 +56,10 @@ class Safe extends Cell {
     //fill(0,0);
     //rect(pos.x, pos.y, cellSize, cellSize);
     if (numBombs != 0) {
+      PFont font;
+      font = loadFont("Monaco-48.vlw");
       fill(240);
-      textSize(15 * cellSize / 50);
+      textFont(font, 20 * cellSize / 50);
       textAlign(CENTER, CENTER);
       text("" + numBombs, pos.x + cellSize * 0.5, pos.y + cellSize * 0.4);
     }
