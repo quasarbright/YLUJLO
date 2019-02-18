@@ -49,7 +49,34 @@ class World {
     return count;
   }
   
-  ArrayList<Cell> getNeighbors(int x, int y){
+  ArrayList<PVector> getNeighborPositions(int x, int y) {
+    ArrayList<Integer> xs = new ArrayList<Integer>();
+    ArrayList<Integer> ys = new ArrayList<Integer>();
+    ArrayList<PVector> neighborPositions = new ArrayList<PVector>();
+    xs.add(x);
+    ys.add(y);
+    if(x > 0){
+      xs.add(x-1);
+    }
+    if(x < this.w-1){
+        xs.add(x+1);
+      }
+    if(y > 0){
+      ys.add(y-1);
+    }
+    if(y < this.h-1){
+        ys.add(y+1);
+      }
+    for(int x_:xs){
+      for(int y_:ys){
+        if(x_ != x || y_!=y)
+          neighborPositions.add(new PVector(x, y));
+      }
+    }
+    return neighborPositions;
+  }
+  
+  ArrayList<Cell> getNeighbors(int x, int y) {
     ArrayList<Integer> xs = new ArrayList<Integer>();
     ArrayList<Integer> ys = new ArrayList<Integer>();
     ArrayList<Cell> neighbors = new ArrayList<Cell>();
@@ -103,5 +130,30 @@ class World {
         cell.expose();
       }
     }
+  }
+  
+  ////////// user interaction ////////////
+  
+  // vector in pixel space
+  void onClick(PVector mousePosition) {
+    
+  }
+  
+  void flag(int x, int y){
+    
+  }
+  
+  //expose only that cell (and possibly trigger flood)
+  void expose(int x, int y) {
+    
+  }
+  
+  //expose this cell and all non-flagged neighboring cells
+  void bigExpose(int x, int y) {
+    
+  }
+  
+  void flood(int x, int y) { // check exposed for termination
+    
   }
 }
