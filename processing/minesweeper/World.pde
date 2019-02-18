@@ -1,6 +1,7 @@
 class World {
   Cell[][] cells;
   int w, h, numMines;
+  boolean gameOver = false;
   World(Cell[][] cells) {
     this.cells = cells;
     this.w = cells[0].length;
@@ -122,6 +123,13 @@ class World {
         cells[i][j].drawAt(p);
       }
     }
+    if (gameOver) {
+      textAlign(CENTER, CENTER);
+      PFont font;
+      font = loadFont("Monaco-48.vlw");
+      textFont(font, 48);
+      text("You Lost!", 250, 250);
+    }
   }
 
   void exposeAll() {
@@ -136,13 +144,15 @@ class World {
 
   // vector in pixel space
   void onClick(PVector mousePosition, Actions action) {
-    int x, y;
-    x = (int) (mousePosition.x / cellSize);
-    y = (int) (mousePosition.y / cellSize);
-    switch(action){
-      case FLAG: this.flag(x, y); break;
-      case EXPOSE: this.expose(x, y); break;
-      case BIGEXPOSE: this.bigExpose(x, y); break;
+    if (!gameOver) {
+      int x, y;
+      x = (int) (mousePosition.x / cellSize);
+      y = (int) (mousePosition.y / cellSize);
+      switch(action){
+        case FLAG: this.flag(x, y); break;
+        case EXPOSE: this.expose(x, y); break;
+        case BIGEXPOSE: this.bigExpose(x, y); break;
+      }
     }
   }
 
@@ -153,13 +163,12 @@ class World {
 
   //expose only that cell (and possibly trigger flood)
   void expose(int x, int y) {
-    if(cells[y][x] instanceof Mine) {
+    if (cells[y][x] instanceof Mine && !cells[y][x].flagged) {
       exposeAll();
+      gameOver = true;
       this.show();
-      textAlign(CENTER, CENTER);
-      text("You Lost!", 250, 250);
     }
-    else {
+    else if (cells[y][x] instanceof Safe) {
       Safe cellCopy = (Safe) cells[y][x];
       if (cellCopy.numBombs == 0) {
         flood(x, y);
