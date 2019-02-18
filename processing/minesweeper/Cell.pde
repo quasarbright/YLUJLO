@@ -33,14 +33,14 @@ abstract class Cell {
 
 class Mine extends Cell {
   void drawExposed(PVector pos) {
-    pushMatrix();
-    noStroke();
+    push();
     fill(210,0,0);
     rect(pos.x, pos.y, cellSize, cellSize);
     fill(0,0,0);
+    noStroke();
     ellipse(pos.x + cellSize / 2, pos.y + cellSize / 2,
       cellSize * 1 /3 , cellSize * 1 / 3);
-    popMatrix();
+    pop();
   }
   
 }
@@ -52,7 +52,7 @@ class Safe extends Cell {
   }
 
   void drawExposed(PVector pos) {
-    pushMatrix();
+    push();
     //noStroke();
     //fill(0,0);
     //rect(pos.x, pos.y, cellSize, cellSize);
@@ -64,6 +64,6 @@ class Safe extends Cell {
       textAlign(CENTER, CENTER);
       text("" + numBombs, pos.x + cellSize * 0.5, pos.y + cellSize * 0.4);
     }
-    popMatrix();
+    pop();
   }
 }
