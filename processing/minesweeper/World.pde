@@ -124,12 +124,15 @@ class World {
       }
     }
     if (gameOver) {
+      pushMatrix();
       fill(240);
+      stroke(240);
       textAlign(CENTER, CENTER);
       PFont font;
       font = loadFont("Monaco-48.vlw");
       textFont(font, 48);
       text("You Lost!", 250, 250);
+      popMatrix();
     }
   }
 
