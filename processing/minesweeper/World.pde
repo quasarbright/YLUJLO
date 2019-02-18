@@ -140,12 +140,23 @@ class World {
   }
   
   void flag(int x, int y){
-    
+    cells[y][x].flag();
+    this.show();
   }
   
   //expose only that cell (and possibly trigger flood)
   void expose(int x, int y) {
-    
+    if(cells[y][x] instanceof Mine) {
+      exposeAll();
+      this.show();
+      textAlign(CENTER, CENTER);
+      text("You Lost!", 250, 250);
+      while true {}
+    }
+    else {
+      cells[y][x].expose();
+      this.show();
+    }
   }
   
   //expose this cell and all non-flagged neighboring cells
