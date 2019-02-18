@@ -7,7 +7,7 @@ class World {
     this.h = cells.length;
     this.numMines = this.getNumMines();
   }
-  
+
   World(int w, int h, int numMines) {
     this.w = w;
     this.h = h;
@@ -15,7 +15,7 @@ class World {
     this.cells = new Cell[h][w];
     this.initializeCells();
   }
-  
+
   void makeMines() {
     ArrayList<PVector> minePositions = new ArrayList<PVector>();
     while(minePositions.size() < this.numMines) {
@@ -28,7 +28,7 @@ class World {
       }
     }
   }
-  
+
   void initializeCells() {
     this.makeMines();
     for(int i = 0; i < this.h; i++){
@@ -38,7 +38,7 @@ class World {
       }
     }
   }
-  
+
   int getNumNeighboringBombs(int x, int y){
     ArrayList<Cell> neighbors = this.getNeighbors(x,y);
     int count = 0;
@@ -48,7 +48,7 @@ class World {
     }
     return count;
   }
-  
+
   ArrayList<PVector> getNeighborPositions(int x, int y) {
     ArrayList<Integer> xs = new ArrayList<Integer>();
     ArrayList<Integer> ys = new ArrayList<Integer>();
@@ -75,7 +75,7 @@ class World {
     }
     return neighborPositions;
   }
-  
+
   ArrayList<Cell> getNeighbors(int x, int y) {
     ArrayList<Integer> xs = new ArrayList<Integer>();
     ArrayList<Integer> ys = new ArrayList<Integer>();
@@ -102,7 +102,7 @@ class World {
     }
     return neighbors;
   }
-  
+
   // number of mines on the whole board
   int getNumMines() {
     int count = 0;
@@ -114,7 +114,7 @@ class World {
     }
     return count;
   }
-  
+
   void show() {
     for(int i = 0; i < this.h; i++){
       for(int j = 0; j < this.w; j++){
@@ -123,7 +123,7 @@ class World {
       }
     }
   }
-  
+
   void exposeAll() {
     for(Cell[] row:cells){
       for(Cell cell: row){
@@ -131,9 +131,9 @@ class World {
       }
     }
   }
-  
+
   ////////// user interaction ////////////
-  
+
   // vector in pixel space
   void onClick(PVector mousePosition, Actions action) {
     int x, y;
@@ -145,12 +145,12 @@ class World {
       case BIGEXPOSE: this.bigExpose(x, y); break;
     }
   }
-  
+
   void flag(int x, int y){
     cells[y][x].flag();
     this.show();
   }
-  
+
   //expose only that cell (and possibly trigger flood)
   void expose(int x, int y) {
     if(cells[y][x] instanceof Mine) {
@@ -168,7 +168,7 @@ class World {
       this.show();
     }
   }
-  
+
   //expose this cell and all non-flagged neighboring cells
   void bigExpose(int x, int y) {
     expose(x,y);
@@ -176,7 +176,7 @@ class World {
       this.expose((int)pos.x, (int)pos.y);
     }
   }
-  
+
   void flood(int x, int y) { // check exposed for termination
     Cell cell = this.cells[y][x];
     if(cell instanceof Safe){
