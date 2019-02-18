@@ -4,6 +4,7 @@ int cellSize = 50;
 void setup() {
   size(500,500);
   world = new World(5, 5, 10);
+  cellSize = width/5;
 }
 
 void draw() {

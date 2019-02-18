@@ -62,7 +62,7 @@ class Safe extends Cell {
     //rect(pos.x, pos.y, cellSize, cellSize);
     if (numBombs != 0) {
       fill(240);
-      textSize(15);
+      textSize(15 * cellSize / 50);
       textAlign(CENTER, CENTER);
       text("" + numBombs, pos.x + cellSize * 0.5, pos.y + cellSize * 0.4);
     }

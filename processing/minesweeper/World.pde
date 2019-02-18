@@ -73,7 +73,6 @@ class World {
           neighbors.add(cells[y_][x_]);
       }
     }
-    print(x, y, xs, ys);
     return neighbors;
   }
   
