@@ -135,7 +135,7 @@ class World {
   ////////// user interaction ////////////
   
   // vector in pixel space
-  void onClick(PVector mousePosition) {
+  void onClick(PVector mousePosition, Actions action) {
     
   }
   

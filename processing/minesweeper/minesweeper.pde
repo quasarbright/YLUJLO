@@ -17,3 +17,7 @@ void draw() {
   world.exposeAll();
   world.show();
 }
+
+enum Actions {
+  EXPOSE, FLAG, BIGEXPOSE;
+}
