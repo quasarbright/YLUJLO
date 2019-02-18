@@ -23,7 +23,9 @@ enum Actions {
 
 void mouseClicked() {
   PVector p = new PVector(mouseX, mouseY);
-  if(keyPressed){
+  if(mouseButton==RIGHT){
+    world.onClick(p, Actions.FLAG);
+  } else if(keyPressed){
     if(keyCode == CONTROL){
       world.onClick(p, Actions.FLAG);
     } else if(keyCode == SHIFT){
