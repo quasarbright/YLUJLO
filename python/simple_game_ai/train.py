@@ -3,7 +3,7 @@ from model import *
 from game import *
 from utils import *
 
-def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1, num_epochs=10):
+def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1, num_epochs=10, use_critic=False):
     # agent and environment
     actor = Actor(state_size, num_actions).to(device)
     actor_optimizer = torch.optim.SGD(actor.parameters(), lr=lr)
@@ -51,6 +51,8 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         critic_losses = []
 
         for t in range(100):
+            print()
+            print(game)
             # play an episode
             if didWin:
                 break
@@ -71,10 +73,14 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
                 # backprop rewards to critic
                 actor.zero_grad()
                 logprob = torch.log(action_confidence)
-                score = action_confidence * reward
-                loss = 1-score
-                print(state)
-                print(reward, action_index.item(), loss.item(), logprob.item())
+                if use_critic:
+                    score = action_confidence * value
+                else:
+                    score = action_confidence * reward
+                loss = -score
+                # if reward >= 1:
+                #     print(state)
+                #     print(reward, action_index.item(), loss.item(), logprob.item(), value.item())
                 actor_losses.append(loss.item())
                 loss.backward()
                 actor_optimizer.step()
@@ -87,7 +93,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         return avg_actor_loss, avg_critic_loss
 
     def train_on_memory():
-        for state, action_index, nextState, reward in random.sample(memory, 10):
+        for state, action_index, nextState, reward in random.sample(memory, min(len(memory), 10)):
             update_critic(state, action_index, nextState, reward)
 
     for epoch in range(num_epochs):

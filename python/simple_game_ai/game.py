@@ -59,6 +59,19 @@ class Game:
 
     def check_target(self):
         return self.player_x == self.target_x and self.player_y == self.target_y
+    
+    def __str__(self):
+        ans = ''
+        for row in self.board:
+            temp = ''
+            for num in row:
+                if num == 0:
+                    temp += ' '
+                else:
+                    temp += str(num)
+                temp += ' '
+            ans += '\n'+temp
+        return ans
 
 game = Game()
 # right, then left
