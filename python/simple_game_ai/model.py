@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+from torch.distributions import Categorical
 from utils import *
 
 class Actor(nn.Module):
@@ -26,8 +27,10 @@ class Actor(nn.Module):
         returns int for action
         '''
         sm = self.forward(state)
-        confidence, index = torch.max(sm, dim=-1)
-        return confidence, index
+        dist = Categorical(sm)
+        index = dist.sample()
+        logprob = dist.log_prob(index)
+        return logprob, index
 
 class Critic(nn.Module):
     '''state, action -> reward'''

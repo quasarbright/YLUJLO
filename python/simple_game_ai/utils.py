@@ -14,3 +14,14 @@ def one_hot(index_batch, length):
     for i, index in enumerate(index_batch):
         t[i,index] = 1
     return t.to(device)
+
+def path(name):
+    return 'saves/{}.pt'.format(name)
+
+def save_model(model, name):
+    torch.save(model, path(name))
+
+def load_model(name):
+    model = torch.load(path(name))
+    model.eval()
+    return model

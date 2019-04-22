@@ -37,7 +37,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         critic_optimizer.step()
         return loss.item()
 
-    def run_episode():
+    def run_episode(show=False):
         '''
         play the game and remember what happened
         '''
@@ -50,17 +50,18 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         actor_losses = []
         critic_losses = []
 
-        for t in range(100):
-            print()
-            print(game)
+        for t in range(20):
+            if show:
+                print()
+                print(game)
             # play an episode
             if didWin:
                 break
-            action_confidence, action_index = actor.choose_action(state)
+            action_logprob, action_index = actor.choose_action(state)
             should_explore = random.random() < exploration_rate
             if should_explore:
                 # sometimes, do a random action just to see what happens
-                action_confidence, action_index = torch.tensor(1 / num_actions).to(device), batch_action(random.randint(0, num_actions-1))
+                action_logprob, action_index = torch.tensor(1 / num_actions).to(device), batch_action(random.randint(0, num_actions-1))
             # observe next state and collect reward
             reward, nextState, didWin = game.move_player(action_index)
             nextState = state_to_tensor(nextState)
@@ -70,13 +71,13 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
             critic_losses.append(critic_loss)
 
             if not should_explore:
-                # backprop rewards to critic
+                # backprop rewards to actor
                 actor.zero_grad()
-                logprob = torch.log(action_confidence)
+                logprob = action_logprob
                 if use_critic:
-                    score = action_confidence * value
+                    score = logprob * value
                 else:
-                    score = action_confidence * reward
+                    score = logprob * reward
                 loss = -score
                 # if reward >= 1:
                 #     print(state)
@@ -98,10 +99,14 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
 
     for epoch in range(num_epochs):
         avg_actor_loss, avg_critic_loss = run_episode()
-        print('episode losses at epoch {}:\n\tactor: {}\n\tcritic: {}'.format(
-            epoch, avg_actor_loss, avg_critic_loss))
+        if (epoch + 1) % (num_epochs // 10) == 0:
+            print('episode losses at epoch {}:\n\tactor: {}\n\tcritic: {}'.format(
+                epoch+1, avg_actor_loss, avg_critic_loss))
         train_on_memory()
 
+    save_model(actor, 'actor')
+    save_model(critic, 'critic')
     return actor, critic
 
-train(9, 4)
+if __name__ == '__main__':
+    train(9, 4, num_epochs=100)
