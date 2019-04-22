@@ -49,6 +49,10 @@ class Game:
         reward = distance - new_distance
         if self.check_target():
             reward = 10
+        elif reward == -1:
+            reward = -2
+        elif reward == 0:
+            reward == -1:
 
         # print(reward, self.return_state(), self.check_target())
         return reward, self.return_state(), self.check_target()
