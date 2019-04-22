@@ -52,7 +52,7 @@ class Game:
         elif reward == -1:
             reward = -2
         elif reward == 0:
-            reward == -1:
+            reward = -1
 
         # print(reward, self.return_state(), self.check_target())
         return reward, self.return_state(), self.check_target()

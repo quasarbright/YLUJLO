@@ -4,7 +4,7 @@ from utils import *
 
 class Actor(nn.Module):
     '''state -> action'''
-    def __init__(self, state_size, num_actions, hidden_dims=32):
+    def __init__(self, state_size, num_actions, hidden_dims=10):
         super(Actor, self).__init__()
         self.fc = nn.Sequential(
             nn.Linear(state_size, hidden_dims),

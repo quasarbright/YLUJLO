@@ -54,13 +54,11 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
             # play an episode
             if didWin:
                 break
+            action_confidence, action_index = actor.choose_action(state)
             should_explore = random.random() < exploration_rate
             if should_explore:
                 # sometimes, do a random action just to see what happens
-                action_confidence, action_index = 0, batch_action(random.randint(0, num_actions-1))
-            else:
-                # compute action under policy
-                action_confidence, action_index = actor.choose_action(state)
+                action_confidence, action_index = torch.tensor(1 / num_actions).to(device), batch_action(random.randint(0, num_actions-1))
             # observe next state and collect reward
             reward, nextState, didWin = game.move_player(action_index)
             nextState = state_to_tensor(nextState)
@@ -73,8 +71,10 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
                 # backprop rewards to critic
                 actor.zero_grad()
                 logprob = torch.log(action_confidence)
-                score = logprob * value
-                loss = -score
+                score = action_confidence * reward
+                loss = 1-score
+                print(state)
+                print(reward, action_index.item(), loss.item(), logprob.item())
                 actor_losses.append(loss.item())
                 loss.backward()
                 actor_optimizer.step()
@@ -87,7 +87,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         return avg_actor_loss, avg_critic_loss
 
     def train_on_memory():
-        for state, action_index, nextState, reward in memory:
+        for state, action_index, nextState, reward in random.sample(memory, 10):
             update_critic(state, action_index, nextState, reward)
 
     for epoch in range(num_epochs):
