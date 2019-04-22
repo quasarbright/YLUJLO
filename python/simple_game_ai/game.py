@@ -48,7 +48,7 @@ class Game:
         new_distance = abs(self.target_x - self.player_x) + abs(self.target_x - self.player_y)
         reward = distance - new_distance
 
-        print(reward, self.return_state(), self.check_target())
+        # print(reward, self.return_state(), self.check_target())
         return reward, self.return_state(), self.check_target()
 
     def check_target(self):
