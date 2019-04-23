@@ -214,9 +214,19 @@ class PlayableGame(VisibleGame):
 
     def handle_keypress(self, ke):
         name = ke.name
-        pass
-        if name == 'a':
-            pass
+        
+        if name == 'd' or 'right':
+            self.move_player(1)
+        elif name == 'w' or 'up':
+            self.move_player(2)
+        elif name ==  'a' or 'left':
+            self.move_player(3)
+        elif name == 's' or 'down':
+            self.move_player(4)
+        else:
+            self.move_player(0)
+
+        self.draw()
 
 if __name__ == '__main__':
     vg = VisibleGame(5, 5)
