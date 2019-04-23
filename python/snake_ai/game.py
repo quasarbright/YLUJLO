@@ -6,6 +6,9 @@ class Vector:
     def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
+    
+    def add(self, other):
+        self += other
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
@@ -86,10 +89,10 @@ class Game:
             down += 1
 
         # find x distance to fruit
-        x = abs(head.x - self.fruitPos.x)
+        x = self.fruitPos.x - head.x
 
         # find y distance to fruit
-        y = abs(head.y - self.fruitPos.y)
+        y = self.fruitPos.y - head.y
 
         return [right, up, left, down, x, y]
 
@@ -118,7 +121,7 @@ class Game:
         head = self.tail[-1]
 
         ate = head == self.fruitPos
-        oldFruit = selffruitPos
+        oldFruit = self.fruitPos
         # increment tail length if it ate
         if ate:
             self.tailLength += 1
@@ -217,6 +220,10 @@ class PlayableGame(VisibleGame):
         pass
         if name == 'a':
             pass
+
+    def update(self):
+        self.move_player(0)
+        self.draw()
 
 if __name__ == '__main__':
     vg = VisibleGame(5, 5)
