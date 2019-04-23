@@ -90,6 +90,22 @@ class Game:
 
         return [right, up, left, down, x, y]
 
+    def reward(self, oldHead, oldFruit, newHead, newFruit, ate, died):
+        '''
+        calculates the reward for a movement given where the head
+        was and where the head moved to
+        '''
+
+        if died:
+            return -10
+        elif ate:
+            return 10
+        else:
+            oldDistance = abs(oldHead.x - oldFruit.x) + abs(oldHead.y - oldFruit.y)
+            newDistance = abs(newHead.x - newFruit.x) + abs(newHead.y - newFruit.y)
+            return newDistance - oldDistance
+
+
     def move_player(self, newDirection):
         '''
         direction is 0, 1, 2, or 3, or 4
@@ -98,8 +114,10 @@ class Game:
         # save snake's head vector
         head = self.tail[-1]
 
+        ate = head == self.fruitPos
+        oldFruit = selffruitPos
         # increment tail length if it ate
-        if head == self.fruitPos:
+        if ate:
             self.tailLength += 1
 
         # no change: make newDirection the previous direction
@@ -124,11 +142,19 @@ class Game:
             self.tail.pop(0)
 
         # spawn a new fruit if it ate
-        if head == self.fruitPos:
+        if ate:
             self.spawn_fruit()
 
         # check if you've died
         dead = self.is_eating_tail(head) or not self.is_in_bounds(head)
+
+        # calculate reward
+        reward = self.reward(head, oldFruit, self.tail[-1], self.fruitPos, ate, died)
+
+        # check state
+        state = self.return_state()
+
+        return reward, dead, state
 
 class VisibleGame(Game):
     '''
