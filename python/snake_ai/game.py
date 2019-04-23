@@ -44,15 +44,7 @@ class Game:
         '''
         is vector somewhere in the tail?
         '''
-
-        # assume it's not dead
-        dead = False
-
-        # if the vector is the same as one of the tail vectors, it's dead
-        for t in self.tail:
-            dead = p == t
-
-        return dead
+        return p in tail[0:-1]
 
     def return_state(self):
         '''
@@ -111,7 +103,7 @@ class VisibleGame(Game):
         self.win = GraphWin("Snake", self.window_width, self.window_height)
         self.rect_width = self.window_width / self.width
         self.rect_height = self.window_height / self.height
-    
+
     def background(self):
         b = Rectangle(Point(0,0), Point(self.window_width, self.window_height))
         b.setFill('gray')
