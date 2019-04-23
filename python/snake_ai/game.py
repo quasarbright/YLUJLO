@@ -1,6 +1,7 @@
 import random
 from graphics import *
 import keyboard
+import time
 
 class Vector:
     def __init__(self, x=0, y=0):
@@ -8,7 +9,11 @@ class Vector:
         self.y = y
     
     def add(self, other):
-        self += other
+        self.x += other.x
+        self.y += other.y
+    
+    def copy(self):
+        return Vector(self.x, self.y)
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
@@ -23,6 +28,9 @@ class Vector:
 
     def __str__(self):
         return '<{}, {}>'.format(self.x, self.y)
+    
+    def __repr__(self):
+        return str(self)
 
 class Game:
     def __init__(self, width, height):
@@ -34,6 +42,7 @@ class Game:
         self.fruitPos = Vector()
         self.spawn_fruit()
         self.direction = 1 # can be 1, 2, 3, or 4
+        self.dead = False
 
     def spawn_fruit(self):
         self.fruitPos = Vector(random.randint(0, self.width-1), random.randint(0, self.height-1))
@@ -50,7 +59,7 @@ class Game:
         '''
         is vector somewhere in the tail?
         '''
-        return p in tail[0:-1]
+        return p in self.tail[0:-1]
 
     def return_state(self):
         '''
@@ -61,31 +70,31 @@ class Game:
         head = self.tail[-1]
 
         # find distance to next obstacle going right
-        curr = head
+        curr = head.copy()
         right = 0
         while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
-            curr.add(1,0)
+            curr.add(Vector(1,0))
             right += 1
 
         # find distance to next obstacle going up
-        curr = head
+        curr = head.copy()
         up = 0
         while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
-            curr.add(0,-1)
+            curr.add(Vector(0,-1))
             up += 1
 
         # find distance to next obstacle going left
-        curr = head
+        curr = head.copy()
         left = 0
         while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
-            curr.add(-1,0)
+            curr.add(Vector(-1,0))
             left += 1
 
         # find distance to next obstacle going down
-        curr = head
+        curr = head.copy()
         down = 0
         while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
-            curr.add(0,1)
+            curr.add(Vector(0,1))
             down += 1
 
         # find x distance to fruit
@@ -117,50 +126,53 @@ class Game:
         direction is 0, 1, 2, or 3, or 4
         nothing, right, up, left, down
         '''
-        # save snake's head vector
-        head = self.tail[-1]
+        assert newDirection in [0,1,2,3,4]
+        if not self.dead:
+            # save snake's head vector
+            head = self.tail[-1]
 
-        ate = head == self.fruitPos
-        oldFruit = self.fruitPos
-        # increment tail length if it ate
-        if ate:
-            self.tailLength += 1
+            ate = head == self.fruitPos
+            oldFruit = self.fruitPos
+            # increment tail length if it ate
+            if ate:
+                self.tailLength += 1
 
-        # no change: make newDirection the previous direction
-        if newDirection == 0:
-            newDirection = self.direction
+            # no change: make newDirection the previous direction
+            if newDirection == 0:
+                newDirection = self.direction
 
-        # go right, up, left, or down
-        if newDirection == 1:
-            self.tail.append(Vector(head.x + 1, head.y))
-        elif newDirection == 2:
-            self.tail.append(Vector(head.x, head.y - 1))
-        elif newDirection == 3:
-            self.tail.append(Vector(head.x - 1, head.y))
-        elif newDirection == 4:
-            self.tail.append(Vector(head.x, head.y + 1))
+            # go right, up, left, or down
+            newPosition = Vector(-1,-1)
+            if newDirection == 1:
+                self.tail.append(Vector(head.x + 1, head.y))
+            elif newDirection == 2:
+                self.tail.append(Vector(head.x, head.y - 1))
+            elif newDirection == 3:
+                self.tail.append(Vector(head.x - 1, head.y))
+            elif newDirection == 4:
+                self.tail.append(Vector(head.x, head.y + 1))
 
-        # update direction
-        self.direction = newDirection
+            # update direction
+            self.direction = newDirection
 
-        # remove end of tail if didn't eat
-        if len(self.tail) > self.tailLength:
-            self.tail.pop(0)
+            # remove end of tail if didn't eat
+            if len(self.tail) > self.tailLength:
+                self.tail.pop(0)
 
-        # spawn a new fruit if it ate
-        if ate:
-            self.spawn_fruit()
+            # spawn a new fruit if it ate
+            if ate:
+                self.spawn_fruit()
 
-        # check if you've died
-        dead = self.is_eating_tail(head) or not self.is_in_bounds(head)
+            # check if you've died
+            self.dead = self.is_eating_tail(head) or not self.is_in_bounds(head)
 
-        # calculate reward
-        reward = self.reward(head, oldFruit, self.tail[-1], self.fruitPos, ate, died)
+            # calculate reward
+            reward = self.reward(head, oldFruit, self.tail[-1], self.fruitPos, ate, self.dead)
 
-        # check state
-        state = self.return_state()
+            # check state
+            state = self.return_state()
 
-        return reward, dead, state
+            return reward, self.dead, state
 
 class VisibleGame(Game):
     '''
@@ -187,9 +199,9 @@ class VisibleGame(Game):
         b = Rectangle(Point(0,0), Point(self.window_width, self.window_height))
         b.setFill('gray')
         b.draw(self.win)
-        for r in range(self.height):
-            for c in range(self.width):
-                self.draw_rectangle_at(r, c, 'gray')
+        # for r in range(self.height):
+        #     for c in range(self.width):
+        #         self.draw_rectangle_at(r, c, 'gray')
 
     def draw_tail(self):
         for position in self.tail:
@@ -213,31 +225,41 @@ class VisibleGame(Game):
 class PlayableGame(VisibleGame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        keyboard.on_press(self.handle_keypress)
+        keyboard.on_press(self.key_listener)
+        self.key = ''
 
-    def handle_keypress(self, ke):
-        name = ke.name
-        
-        if name == 'd' or 'right':
+    def key_listener(self, ke):
+        self.key = ke.name
+        print(self.key)
+    
+    def handle_keypress(self, name):
+        if name == 'd' or name == 'right':
             self.move_player(1)
-        elif name == 'w' or 'up':
+        elif name == 'w' or name == 'up':
+            print('moving')
             self.move_player(2)
-        elif name ==  'a' or 'left':
+        elif name ==  'a' or name == 'left':
             self.move_player(3)
-        elif name == 's' or 'down':
+        elif name == 's' or name == 'down':
             self.move_player(4)
         else:
             self.move_player(0)
 
-        self.draw()
-
     def update(self):
-        self.move_player(0)
+        self.handle_keypress(self.key)
+        print(self.key, self.direction)
+        self.key = ''
         self.draw()
 
 if __name__ == '__main__':
-    vg = VisibleGame(5, 5)
-    vg.draw()
-    while True:
-        print(list(map(str, vg.tail)), vg.fruitPos)
-        vg.win.getMouse()
+    vg = PlayableGame(10,10)
+    # vg.draw()
+    # vg.win.getMouse()
+    # vg.move_player(0)
+    # vg.close()
+    for t in range(100):
+        # move = random.randint(0,4)
+        # vg.move_player(move)
+        # vg.draw()
+        vg.update()
+        time.sleep(1/5)
