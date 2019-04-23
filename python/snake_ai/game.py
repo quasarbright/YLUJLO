@@ -36,7 +36,7 @@ class Game:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        startingHead = Vector(random.randint(0,width-1), random.randint(0, height-1))
+        startingHead = Vector(random.randint(0,width//2), random.randint(0, height-1))
         self.tail = [startingHead] # list of vectors, from tail to head
         self.tailLength = len(self.tail)
         self.fruitPos = Vector()
@@ -145,7 +145,7 @@ class Game:
             elif newDirection == 4:
                 newPosition = Vector(head.x, head.y + 1)
             # only move the snake if it's not about to go out of bounds
-            if self.is_in_bounds(newPosition):
+            if self.is_in_bounds(newPosition) and not self.is_eating_tail(newPosition):
                 self.tail.append(newPosition)
             else:
                 self.dead = True
@@ -227,10 +227,10 @@ class PlayableGame(VisibleGame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         keyboard.on_press(self.key_listener)
-        self.key = ''
+        self.keyQueue = []
 
     def key_listener(self, ke):
-        self.key = ke.name
+        self.keyQueue.append(ke.name)
     
     def handle_keypress(self, name):
         if name == 'd' or name == 'right':
@@ -245,8 +245,10 @@ class PlayableGame(VisibleGame):
             self.move_player(0)
 
     def update(self):
-        self.handle_keypress(self.key)
-        self.key = ''
+        if self.keyQueue == []:
+            self.handle_keypress('')
+        for i in range(len(self.keyQueue)):
+            self.handle_keypress(self.keyQueue.pop(0))
         self.draw()
 
 if __name__ == '__main__':

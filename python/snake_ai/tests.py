@@ -13,6 +13,7 @@ class TestSnake(unittest.TestCase):
         self.assertEqual(self.g.tailLength, 1)
     
     def test_fruit_eat(self):
+        '''test what happens when you eat fruit'''
         g = self.g
         g.move_player(1)
         g.move_player(1) # eats fruit
@@ -28,6 +29,7 @@ class TestSnake(unittest.TestCase):
         self.assertEqual(g.tailLength, 2)
     
     def test_oob(self):
+        '''test what happens when you try to go out of bounds'''
         g = self.g
         g.move_player(3)
         self.assertTrue(g.dead)
