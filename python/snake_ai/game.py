@@ -1,5 +1,6 @@
 import random
 from graphics import *
+import keyboard
 
 class Vector:
     def __init__(self, x=0, y=0):
@@ -209,10 +210,13 @@ class VisibleGame(Game):
 class PlayableGame(VisibleGame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        keyboard.on_press(self.handle_keypress)
 
-    def handle_keypress(self):
+    def handle_keypress(self, ke):
+        name = ke.name
         pass
-
+        if name == 'a':
+            pass
 
 if __name__ == '__main__':
     vg = VisibleGame(5, 5)
