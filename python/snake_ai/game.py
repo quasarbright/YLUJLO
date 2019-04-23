@@ -120,7 +120,6 @@ class Game:
             newDistance = abs(newHead.x - newFruit.x) + abs(newHead.y - newFruit.y)
             return newDistance - oldDistance
 
-
     def move_player(self, newDirection):
         '''
         direction is 0, 1, 2, or 3, or 4
@@ -130,12 +129,6 @@ class Game:
         if not self.dead:
             # save snake's head vector
             head = self.tail[-1]
-
-            ate = head == self.fruitPos
-            oldFruit = self.fruitPos
-            # increment tail length if it ate
-            if ate:
-                self.tailLength += 1
 
             # no change: make newDirection the previous direction
             if newDirection == 0:
@@ -160,14 +153,18 @@ class Game:
                 self.tail.pop(0)
 
             # spawn a new fruit if it ate
+            ate = self.tail[-1] == self.fruitPos
+            oldFruit = self.fruitPos.copy()
+            # increment tail length if it ate
             if ate:
+                self.tailLength += 1
                 self.spawn_fruit()
 
             # check if you've died
-            self.dead = self.is_eating_tail(head) or not self.is_in_bounds(head)
+            self.dead = self.is_eating_tail(self.tail[-1]) or not self.is_in_bounds(self.tail[-1])
 
             # calculate reward
-            reward = self.reward(head, oldFruit, self.tail[-1], self.fruitPos, ate, self.dead)
+            reward = self.reward(self.tail[-1], oldFruit, self.tail[-1], self.fruitPos, ate, self.dead)
 
             # check state
             state = self.return_state()
@@ -230,13 +227,11 @@ class PlayableGame(VisibleGame):
 
     def key_listener(self, ke):
         self.key = ke.name
-        print(self.key)
     
     def handle_keypress(self, name):
         if name == 'd' or name == 'right':
             self.move_player(1)
         elif name == 'w' or name == 'up':
-            print('moving')
             self.move_player(2)
         elif name ==  'a' or name == 'left':
             self.move_player(3)
@@ -247,7 +242,6 @@ class PlayableGame(VisibleGame):
 
     def update(self):
         self.handle_keypress(self.key)
-        print(self.key, self.direction)
         self.key = ''
         self.draw()
 
