@@ -46,21 +46,67 @@ class Game:
         '''
         is vector somewhere in the tail?
         '''
-
-        # assume it's not dead
-        dead = False
-
-        # if the vector is the same as one of the tail vectors, it's dead
-        for t in self.tail:
-            dead = p == t
-
-        return dead
+        return p in tail[0:-1]
 
     def return_state(self):
         '''
-        return representation as a 1D list
+        return representation as a 1D list: distance from head to nearest object in all
+        4 directions, and x and y distance to the fruit
         '''
-        pass
+        # save snake's head vector
+        head = self.tail[-1]
+
+        # find distance to next obstacle going right
+        curr = head
+        right = 0
+        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
+            curr.add(1,0)
+            right += 1
+
+        # find distance to next obstacle going up
+        curr = head
+        up = 0
+        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
+            curr.add(0,-1)
+            up += 1
+
+        # find distance to next obstacle going left
+        curr = head
+        left = 0
+        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
+            curr.add(-1,0)
+            left += 1
+
+        # find distance to next obstacle going down
+        curr = head
+        down = 0
+        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
+            curr.add(0,1)
+            down += 1
+
+        # find x distance to fruit
+        x = abs(head.x - self.fruitPos.x)
+
+        # find y distance to fruit
+        y = abs(head.y - self.fruitPos.y)
+
+        return [right, up, left, down, x, y]
+
+    def reward(self, oldHead, oldFruit, newHead, newFruit, ate, died):
+        '''
+        calculates the reward for a movement given where the head
+        was and where the head moved to
+        '''
+
+        if died:
+            return -10
+        elif ate:
+            return 10
+        else:
+            oldDistance = abs(oldHead.x - oldFruit.x) + abs(oldHead.y - oldFruit.y)
+            newDistance = abs(newHead.x - newFruit.x) + abs(newHead.y - newFruit.y)
+            return newDistance - oldDistance
+
 
     def move_player(self, newDirection):
         '''
@@ -70,8 +116,10 @@ class Game:
         # save snake's head vector
         head = self.tail[-1]
 
+        ate = head == self.fruitPos
+        oldFruit = selffruitPos
         # increment tail length if it ate
-        if head == self.fruitPos:
+        if ate:
             self.tailLength += 1
 
         # no change: make newDirection the previous direction
@@ -96,11 +144,19 @@ class Game:
             self.tail.pop(0)
 
         # spawn a new fruit if it ate
-        if head == self.fruitPos:
+        if ate:
             self.spawn_fruit()
 
         # check if you've died
-        dead = self.is_in_bounds(head) or self.is_eating_tail(head)
+        dead = self.is_eating_tail(head) or not self.is_in_bounds(head)
+
+        # calculate reward
+        reward = self.reward(head, oldFruit, self.tail[-1], self.fruitPos, ate, died)
+
+        # check state
+        state = self.return_state()
+
+        return reward, dead, state
 
 class VisibleGame(Game):
     '''
@@ -113,7 +169,7 @@ class VisibleGame(Game):
         self.win = GraphWin("Snake", self.window_width, self.window_height)
         self.rect_width = self.window_width / self.width
         self.rect_height = self.window_height / self.height
-    
+
     def draw_rectangle_at(self, r, c, color):
         p1 = Point(c*self.rect_width, r*self.rect_height)
         p2 = Point((c+1)*self.rect_width, (r+1)*self.rect_height)
@@ -122,23 +178,26 @@ class VisibleGame(Game):
         r.setWidth(1)
         r.setOutline('black')
         r.draw(self.win)
-    
+
     def draw_background(self):
+        b = Rectangle(Point(0,0), Point(self.window_width, self.window_height))
+        b.setFill('gray')
+        b.draw(self.win)
         for r in range(self.height):
             for c in range(self.width):
                 self.draw_rectangle_at(r, c, 'gray')
-    
+
     def draw_tail(self):
         for position in self.tail:
             c = position.x
             r = position.y
             self.draw_rectangle_at(r, c, 'white')
-    
+
     def draw_fruit(self):
         c = self.fruitPos.x
         r = self.fruitPos.y
         self.draw_rectangle_at(r, c, 'red')
-    
+
     def draw(self):
         self.draw_background()
         self.draw_tail()
@@ -150,7 +209,7 @@ class VisibleGame(Game):
 class PlayableGame(VisibleGame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    
+
     def handle_keypress(self):
         pass
 
