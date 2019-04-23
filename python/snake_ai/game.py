@@ -65,7 +65,7 @@ class Game:
         nothing, right, up, left, down
         '''
         
-        # establish the head of the snake's position
+        # save snake's head vector
         head = self.tail[-1]
 
         # increment tail length if it ate
