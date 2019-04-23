@@ -11,6 +11,7 @@ class TestSnake(unittest.TestCase):
         self.assertEqual(self.g.tail, [Vector(0,0)])
         self.assertEqual(self.g.fruitPos, Vector(2,0))
         self.assertEqual(self.g.tailLength, 1)
+    
     def test_fruit_eat(self):
         g = self.g
         g.move_player(1)
@@ -25,6 +26,14 @@ class TestSnake(unittest.TestCase):
         g.move_player(4)
         self.assertEqual(g.tail, [Vector(2,1), Vector(2,2)])
         self.assertEqual(g.tailLength, 2)
+    
+    def test_oob(self):
+        g = self.g
+        g.move_player(3)
+        self.assertTrue(g.dead)
+        self.assertEqual(g.tail, [Vector(0,0)])
+        g.move_player(4)
+        self.assertEqual(g.tail, [Vector(0,0)])
 
 if __name__ == '__main__':
     unittest.main()

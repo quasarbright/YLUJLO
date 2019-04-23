@@ -137,19 +137,23 @@ class Game:
             # go right, up, left, or down
             newPosition = Vector(-1,-1)
             if newDirection == 1:
-                self.tail.append(Vector(head.x + 1, head.y))
+                newPosition = Vector(head.x + 1, head.y)
             elif newDirection == 2:
-                self.tail.append(Vector(head.x, head.y - 1))
+                newPosition = Vector(head.x, head.y - 1)
             elif newDirection == 3:
-                self.tail.append(Vector(head.x - 1, head.y))
+                newPosition = Vector(head.x - 1, head.y)
             elif newDirection == 4:
-                self.tail.append(Vector(head.x, head.y + 1))
-
+                newPosition = Vector(head.x, head.y + 1)
+            # only move the snake if it's not about to go out of bounds
+            if self.is_in_bounds(newPosition):
+                self.tail.append(newPosition)
+            else:
+                self.dead = True
             # update direction
             self.direction = newDirection
 
             # remove end of tail if didn't eat
-            if len(self.tail) > self.tailLength:
+            if len(self.tail) > self.tailLength and not self.dead:
                 self.tail.pop(0)
 
             # spawn a new fruit if it ate
@@ -161,7 +165,7 @@ class Game:
                 self.spawn_fruit()
 
             # check if you've died
-            self.dead = self.is_eating_tail(self.tail[-1]) or not self.is_in_bounds(self.tail[-1])
+            self.dead = self.dead or self.is_eating_tail(self.tail[-1]) or not self.is_in_bounds(self.tail[-1])
 
             # calculate reward
             reward = self.reward(self.tail[-1], oldFruit, self.tail[-1], self.fruitPos, ate, self.dead)
