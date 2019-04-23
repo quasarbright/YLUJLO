@@ -13,21 +13,21 @@ def run_model(num_episodes=1):
         game = Game()
         # playing vars
         state = state_to_tensor(game.return_state())
-        didWin = False
+        gameOver = False
 
         for t in range(100):
             if show:
                 print()
                 print(game)
             # play an episode
-            if didWin:
-                print('VICTORY')
-                print('VICTORY')
-                print('VICTORY')
+            if gameOver:
+                print('DEATH')
+                print('DEATH')
+                print('DEATH')
                 break
             action_logprob, action_index = actor.choose_action(state)
             # observe next state and collect reward
-            reward, nextState, didWin = game.move_player(action_index)
+            reward, nextState, gameOver = game.move_player(action_index)
             nextState = state_to_tensor(nextState)
             # update state
             state = nextState

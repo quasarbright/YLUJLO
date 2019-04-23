@@ -45,7 +45,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         # playing vars
         state = state_to_tensor(game.return_state())
         reward = 0
-        didWin = False
+        gameOver = False
 
         actor_losses = []
         critic_losses = []
@@ -55,7 +55,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
                 print()
                 print(game)
             # play an episode
-            if didWin:
+            if gameOver:
                 break
             action_logprob, action_index = actor.choose_action(state)
             should_explore = random.random() < exploration_rate
@@ -63,7 +63,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
                 # sometimes, do a random action just to see what happens
                 action_logprob, action_index = torch.tensor(1 / num_actions).to(device), batch_action(random.randint(0, num_actions-1))
             # observe next state and collect reward
-            reward, nextState, didWin = game.move_player(action_index)
+            reward, nextState, gameOver = game.move_player(action_index)
             nextState = state_to_tensor(nextState)
             value = critic(state, action_index)
             

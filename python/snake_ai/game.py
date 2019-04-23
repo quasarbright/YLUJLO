@@ -17,6 +17,8 @@ class Vector:
             raise TypeError(str(type(other)))
         return Vector(self.x + other.x, self.y + other.y)
 
+    def __str__(self):
+        return '<{}, {}>'.format(self.x, self.y)
 
 class Game:
     def __init__(self, width, height):
@@ -105,23 +107,57 @@ class VisibleGame(Game):
     a game that is rendered on screen
     '''
     def __init__(self, *args, **kwargs):
-        super(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.window_width = 500
         self.window_height = 500
         self.win = GraphWin("Snake", self.window_width, self.window_height)
         self.rect_width = self.window_width / self.width
         self.rect_height = self.window_height / self.height
     
-    def background(self):
-        b = Rectangle(Point(0,0), Point(self.window_width, self.window_height))
-        b.setFill('gray')
-        b.draw(self.win)
+    def draw_rectangle_at(self, r, c, color):
+        p1 = Point(c*self.rect_width, r*self.rect_height)
+        p2 = Point((c+1)*self.rect_width, (r+1)*self.rect_height)
+        r = Rectangle(p1, p2)
+        r.setFill(color)
+        r.setWidth(1)
+        r.setOutline('black')
+        r.draw(self.win)
+    
+    def draw_background(self):
         for r in range(self.height):
             for c in range(self.width):
-                p1 = Point(c*self.rect_width, r*self.rect_height)
-                p1 = Point((c+1)*self.rect_width, (r+1)*self.rect_height)
-
-
+                self.draw_rectangle_at(r, c, 'gray')
+    
+    def draw_tail(self):
+        for position in self.tail:
+            c = position.x
+            r = position.y
+            self.draw_rectangle_at(r, c, 'white')
+    
+    def draw_fruit(self):
+        c = self.fruitPos.x
+        r = self.fruitPos.y
+        self.draw_rectangle_at(r, c, 'red')
+    
+    def draw(self):
+        self.draw_background()
+        self.draw_tail()
+        self.draw_fruit()
 
     def close(self):
         self.win.close()
+
+class PlayableGame(VisibleGame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+    def handle_keypress(self):
+        pass
+
+
+if __name__ == '__main__':
+    vg = VisibleGame(5, 5)
+    vg.draw()
+    while True:
+        print(list(map(str, vg.tail)), vg.fruitPos)
+        vg.win.getMouse()
