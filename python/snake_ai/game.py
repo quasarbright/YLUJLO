@@ -48,9 +48,47 @@ class Game:
 
     def return_state(self):
         '''
-        return representation as a 1D list
+        return representation as a 1D list: distance from head to nearest object in all
+        4 directions, and x and y distance to the fruit
         '''
-        pass
+        # save snake's head vector
+        head = self.tail[-1]
+
+        # find distance to next obstacle going right
+        curr = head
+        right = 0
+        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
+            curr.add(1,0)
+            right += 1
+
+        # find distance to next obstacle going up
+        curr = head
+        up = 0
+        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
+            curr.add(0,-1)
+            up += 1
+
+        # find distance to next obstacle going left
+        curr = head
+        left = 0
+        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
+            curr.add(-1,0)
+            left += 1
+
+        # find distance to next obstacle going down
+        curr = head
+        down = 0
+        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
+            curr.add(0,1)
+            down += 1
+
+        # find x distance to fruit
+        x = abs(head.x - self.fruitPos.x)
+
+        # find y distance to fruit
+        y = abs(head.y - self.fruitPos.y)
+
+        return [right, up, left, down, x, y]
 
     def move_player(self, newDirection):
         '''
@@ -90,7 +128,7 @@ class Game:
             self.spawn_fruit()
 
         # check if you've died
-        dead = self.is_in_bounds(head) or self.is_eating_tail(head)
+        dead = self.is_eating_tail(head) or not self.is_in_bounds(head)
 
 class VisibleGame(Game):
     '''
