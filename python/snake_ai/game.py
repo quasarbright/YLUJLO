@@ -46,7 +46,7 @@ class Game:
 
     def spawn_fruit(self):
         self.fruitPos = Vector(random.randint(0, self.width-1), random.randint(0, self.height-1))
-        while self.fruitPos == self.tail[-1]:
+        while self.fruitPos in self.tail:
             self.fruitPos = Vector(random.randint(0, self.width-1), random.randint(0, self.height-1))
 
     def is_in_bounds(self, p):
@@ -255,7 +255,7 @@ if __name__ == '__main__':
     # vg.win.getMouse()
     # vg.move_player(0)
     # vg.close()
-    for t in range(100):
+    for t in range(1000):
         # move = random.randint(0,4)
         # vg.move_player(move)
         # vg.draw()
