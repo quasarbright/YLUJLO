@@ -125,7 +125,7 @@ class Game:
         direction is 0, 1, 2, or 3, or 4
         nothing, right, up, left, down
         '''
-        assert newDirection in [0,1,2,3,4]
+        # assert newDirection in [0,1,2,3,4]
         if not self.dead:
             # save snake's head vector
             head = self.tail[-1]
@@ -173,7 +173,7 @@ class Game:
             # check state
             state = self.return_state()
 
-            return reward, self.dead, state
+            return reward, state, self.dead
 
 class VisibleGame(Game):
     '''
