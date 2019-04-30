@@ -28,6 +28,7 @@ def run_model(num_episodes=1):
             action_logprob, action_index = actor.choose_action(state)
             # observe next state and collect reward
             reward, nextState, gameOver = game.move_player(action_index)
+            print(reward)
             nextState = state_to_tensor(nextState)
             # update state
             state = nextState

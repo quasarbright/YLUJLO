@@ -118,7 +118,7 @@ class Game:
         else:
             oldDistance = abs(oldHead.x - oldFruit.x) + abs(oldHead.y - oldFruit.y)
             newDistance = abs(newHead.x - newFruit.x) + abs(newHead.y - newFruit.y)
-            return newDistance - oldDistance
+            return oldDistance - newDistance
 
     def move_player(self, newDirection):
         '''

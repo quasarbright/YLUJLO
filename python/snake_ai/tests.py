@@ -36,6 +36,18 @@ class TestSnake(unittest.TestCase):
         self.assertEqual(g.tail, [Vector(0,0)])
         g.move_player(4)
         self.assertEqual(g.tail, [Vector(0,0)])
+    
+    def test_reward(self):
+        g = self.g
+        reward, nextState, dead = g.move_player(1)
+        self.assertEqual(reward, 1)
+        reward, nextState, dead = g.move_player(4)
+        self.assertEqual(reward, -1)
+        reward, nextState, dead = g.move_player(1)
+        self.assertEqual(reward, 1)
+        reward, nextState, dead = g.move_player(2)
+        self.assertEqual(reward, 10)
+
 
 if __name__ == '__main__':
     unittest.main()

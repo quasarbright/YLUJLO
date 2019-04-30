@@ -102,7 +102,9 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
 
     for epoch in range(num_epochs):
         avg_actor_loss, avg_critic_loss = run_episode()
-        mem_loss = train_on_memory(batch_size)
+        mem_loss = 'N/A'
+        if use_critic:
+            mem_loss = train_on_memory(batch_size)
         if (epoch + 1) % max(1,(num_epochs // 10)) == 0:
             print('episode losses at epoch {}:\n\tactor: {}\n\tcritic: {}\n\tcritic batch: {}'.format(
                 epoch+1, avg_actor_loss, avg_critic_loss, mem_loss))
@@ -112,4 +114,4 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
     return actor, critic
 
 if __name__ == '__main__':
-    train(6, 5, num_epochs=100, use_critic=True)
+    train(6, 5, num_epochs=100, use_critic=False)
