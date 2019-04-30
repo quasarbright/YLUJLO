@@ -4,13 +4,13 @@ from utils import *
 from game import VisibleGame
 
 def run_model(num_episodes=1):
-    actor = load_model('actor')
+    q = load_model('q')
 
     def run_episode(show=True):
         '''
         play the game and remember what happened
         '''
-        game = VisibleGame(20,20)
+        game = VisibleGame(10,10)
         # playing vars
         state = state_to_tensor(game.return_state())
         gameOver = False
@@ -25,7 +25,7 @@ def run_model(num_episodes=1):
                 print('DEATH')
                 print('DEATH')
                 break
-            action_logprob, action_index = actor.choose_action(state)
+            action_index = q.choose_action(state)
             # observe next state and collect reward
             reward, nextState, gameOver = game.move_player(action_index)
             nextState = state_to_tensor(nextState)

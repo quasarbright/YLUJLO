@@ -168,7 +168,7 @@ class Game:
             self.dead = self.dead or self.is_eating_tail(self.tail[-1]) or not self.is_in_bounds(self.tail[-1])
 
             # calculate reward
-            reward = self.reward(self.tail[-1], oldFruit, self.tail[-1], self.fruitPos, ate, self.dead)
+            reward = self.reward(head, oldFruit, self.tail[-1], self.fruitPos, ate, self.dead)
 
             # check state
             state = self.return_state()
