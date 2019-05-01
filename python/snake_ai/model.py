@@ -5,7 +5,7 @@ from utils import *
 
 class Q(nn.Module):
     '''state, action -> reward'''
-    def __init__(self, state_size, num_actions, hidden_dims=32):
+    def __init__(self, state_size, num_actions, hidden_dims=64):
         super(Q, self).__init__()
         self.num_actions = num_actions
 

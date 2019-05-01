@@ -174,6 +174,27 @@ class Game:
             state = self.return_state()
 
             return reward, state, self.dead
+    
+    def copy(self):
+        ans = Game(self.width, self.height)
+        ans.width = self.width
+        ans.height = self.height
+        ans.tail = [v.copy() for v in self.tail]  # list of vectors, from tail to head
+        ans.tailLength = self.tailLength
+        ans.fruitPos = self.fruitPos.copy()
+        ans.direction = self.direction  # can be 1, 2, 3, or 4
+        ans.dead = self.dead
+        return ans
+    
+    def check_move(self, newDirection):
+        g = self.copy()
+        return g.move_player(newDirection)
+    
+    def best_move(self):
+        def key(newDirection):
+            reward, state, dead = self.check_move(newDirection)
+            return reward
+        return max(range(5), key=key)
 
 class VisibleGame(Game):
     '''
