@@ -25,9 +25,10 @@ def run_model(num_episodes=1, perfect=False):
                 print('DEATH')
                 print('DEATH')
                 break
-            action_index = q.choose_action(state)
             if perfect:
                 action_index = game.best_move()
+            else:
+                action_index = q.choose_action(state)
             # observe next state and collect reward
             reward, nextState, gameOver = game.move_player(action_index)
             print(reward, action_index)

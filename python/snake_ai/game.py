@@ -25,6 +25,11 @@ class Vector:
         if type(self) is not type(other):
             raise TypeError(str(type(other)))
         return Vector(self.x + other.x, self.y + other.y)
+    
+    def __sub__(self, other):
+        if type(self) is not type(other):
+            raise TypeError(str(type(other)))
+        return Vector(self.x - other.x, self.y - other.y)
 
     def __str__(self):
         return '<{}, {}>'.format(self.x, self.y)
@@ -41,7 +46,7 @@ class Game:
         self.tailLength = len(self.tail)
         self.fruitPos = Vector()
         self.spawn_fruit()
-        self.direction = 1 # can be 1, 2, 3, or 4
+        self.direction = 0 # can be 0, 1, 2, 3
         self.dead = False
         self.age = 0
         self.score = 0 # fruits eaten
@@ -70,42 +75,31 @@ class Game:
         '''
         # save snake's head vector
         head = self.tail[-1]
+        # for both of these lists, they're in the order right, up, left, down
+        danger = [0 for _ in range(4)] # is there an obstacle adjacent in this direction?
+        offs = [Vector(1,0), Vector(0,-1), Vector(-1,0), Vector(0,1)] # offsets of position
+        for i, off in enumerate(offs):
+            newPos = head + off
+            if self.is_eating_tail(newPos) or not self.is_in_bounds(newPos):
+                danger[i] = 1 # you'll die if you go that way
 
-        # find distance to next obstacle going right
-        curr = head.copy()
-        right = 0
-        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
-            curr.add(Vector(1,0))
-            right += 1
+        direction = [0 for _ in range(4)]
+        direction[self.direction] = 1
 
-        # find distance to next obstacle going up
-        curr = head.copy()
-        up = 0
-        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
-            curr.add(Vector(0,-1))
-            up += 1
-
-        # find distance to next obstacle going left
-        curr = head.copy()
-        left = 0
-        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
-            curr.add(Vector(-1,0))
-            left += 1
-
-        # find distance to next obstacle going down
-        curr = head.copy()
-        down = 0
-        while self.is_in_bounds(curr) and not self.is_eating_tail(curr):
-            curr.add(Vector(0,1))
-            down += 1
-
-        # find x distance to fruit
-        x = self.fruitPos.x - head.x
-
-        # find y distance to fruit
-        y = self.fruitPos.y - head.y
-
-        return [right, up, left, down, x, y]
+        fruit = [0 for _ in range(4)]
+        toFruit = self.fruitPos - head
+        if toFruit.x > 0:
+            fruit[0] = 1
+        elif toFruit.x < 0:
+            fruit[2] = 1
+        if toFruit.y > 0:
+            fruit[3] = 1 # fruit is below
+        elif toFruit.y < 0:
+            fruit[1] = 1
+        
+        return [*danger, *direction, *fruit] # bunch of 1s and 0s, size of 12
+        
+        
 
     def reward(self, oldHead, oldFruit, newHead, newFruit, ate, died):
         '''
@@ -134,18 +128,18 @@ class Game:
             head = self.tail[-1]
 
             # no change: make newDirection the previous direction
-            if newDirection == 0:
+            if newDirection == 4:
                 newDirection = self.direction
 
             # go right, up, left, or down
             newPosition = Vector(-1,-1)
-            if newDirection == 1:
+            if newDirection == 0:
                 newPosition = Vector(head.x + 1, head.y)
-            elif newDirection == 2:
+            elif newDirection == 1:
                 newPosition = Vector(head.x, head.y - 1)
-            elif newDirection == 3:
+            elif newDirection == 2:
                 newPosition = Vector(head.x - 1, head.y)
-            elif newDirection == 4:
+            elif newDirection == 3:
                 newPosition = Vector(head.x, head.y + 1)
             # only move the snake if it's not about to go out of bounds
             if self.is_in_bounds(newPosition) and not self.is_eating_tail(newPosition):
@@ -184,10 +178,10 @@ class Game:
         ans = Game(self.width, self.height)
         ans.width = self.width
         ans.height = self.height
-        ans.tail = [v.copy() for v in self.tail]  # list of vectors, from tail to head
+        ans.tail = [v.copy() for v in self.tail]
         ans.tailLength = self.tailLength
         ans.fruitPos = self.fruitPos.copy()
-        ans.direction = self.direction  # can be 1, 2, 3, or 4
+        ans.direction = self.direction
         ans.dead = self.dead
         ans.age = self.age
         ans.score = self.score
@@ -264,15 +258,15 @@ class PlayableGame(VisibleGame):
     
     def handle_keypress(self, name):
         if name == 'd' or name == 'right':
-            self.move_player(1)
-        elif name == 'w' or name == 'up':
-            self.move_player(2)
-        elif name ==  'a' or name == 'left':
-            self.move_player(3)
-        elif name == 's' or name == 'down':
-            self.move_player(4)
-        else:
             self.move_player(0)
+        elif name == 'w' or name == 'up':
+            self.move_player(1)
+        elif name ==  'a' or name == 'left':
+            self.move_player(2)
+        elif name == 's' or name == 'down':
+            self.move_player(3)
+        else:
+            self.move_player(4)
 
     def update(self):
         if self.keyQueue == []:
