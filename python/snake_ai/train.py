@@ -111,6 +111,6 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.00
 
 if __name__ == '__main__':
     # train random
-    # train(12, 4, num_episodes=100, batch_size=100, num_epochs=1, exploration_rate=1)
+    train(12, 4, num_episodes=5, batch_size=5, num_epochs=10, exploration_rate=1)
     # train decision
     train(12, 4, num_episodes=100, batch_size=100, num_epochs=1, exploration_rate=.1, load=True)
