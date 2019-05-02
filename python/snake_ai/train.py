@@ -3,7 +3,7 @@ from model import *
 from game import *
 from utils import *
 
-def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.01, num_episodes=10, num_epochs=500, episode_epochs=5, batch_size=500, load=False):
+def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.0005, num_episodes=10, num_epochs=500, episode_epochs=5, batch_size=500, load=False):
     # agent and environment
     if load:
         q = load_model('q')
@@ -13,7 +13,7 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.01
         q = Q(state_size, num_actions).to(device)
         q.train()
     loss_fn = nn.MSELoss()
-    optimizer = torch.optim.SGD(q.parameters(), lr=lr)
+    optimizer = torch.optim.Adam(q.parameters(), lr=lr)
     
     memory = [] # [(state, action index, next state, reward), ...]
 
@@ -52,7 +52,7 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.01
         '''
         play the game and remember what happened
         '''
-        game = Game(20,20)
+        game = Game(10,10)
         episode_memory = []
         # playing vars
         state = state_to_tensor(game.return_state())
@@ -61,7 +61,7 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.01
 
         losses = []
 
-        for t in range(500):
+        for t in range(200):
             # play an episode
             if gameOver:
                 break
@@ -81,7 +81,8 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.01
             # update state
             state = nextState
         avg_loss = train_on_all_memory(episode_memory, episode_epochs, show=False)
-        return avg_loss
+        save_model(q, 'q')
+        return avg_loss, game.status()
 
     def train_on_random_memory(batch_size):
         '''train on a single random batch'''
@@ -94,10 +95,13 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.01
 
     print('training on episodes')
     for epoch in range(num_episodes):
-        episode_loss = run_episode()
+        should_print = True # (epoch + 1) % max(1,(num_episodes // 10)) == 0
+        episode_loss, status = run_episode()
+        if should_print:
+            print('losses at epoch {}: \n\tepisode: {}\n\tstatus: {}'.format(epoch+1, episode_loss, status))
         mem_loss = train_on_random_memory(batch_size)
-        if (epoch + 1) % max(1,(num_episodes // 10)) == 0:
-            print('losses at epoch {}:\n\tepisode: {}\n\tmemory: {}'.format(epoch+1, episode_loss, mem_loss))
+        if should_print:
+            print('\tmemory: {}'.format(mem_loss))
     print('training on all memory')
     train_on_all_memory(memory, num_epochs)
 
@@ -106,4 +110,7 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.01
     return q
 
 if __name__ == '__main__':
-    train(6, 5, num_episodes=100, batch_size=100, num_epochs=1, exploration_rate=.1)
+    # train random
+    train(6, 5, num_episodes=100, batch_size=100, num_epochs=1, exploration_rate=1)
+    # train decision
+    train(6, 5, num_episodes=100, batch_size=100, num_epochs=1, exploration_rate=.1, load=True)

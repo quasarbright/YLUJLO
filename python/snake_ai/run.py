@@ -10,7 +10,7 @@ def run_model(num_episodes=1, perfect=False):
         '''
         play the game and remember what happened
         '''
-        game = VisibleGame(20,20)
+        game = VisibleGame(10,10)
         # playing vars
         state = state_to_tensor(game.return_state())
         gameOver = False

@@ -5,13 +5,19 @@ from utils import *
 
 class Q(nn.Module):
     '''state, action -> reward'''
-    def __init__(self, state_size, num_actions, hidden_dims=64):
+    def __init__(self, state_size, num_actions, hidden_dims=120):
         super(Q, self).__init__()
         self.num_actions = num_actions
 
         self.fc = nn.Bilinear(state_size, num_actions, hidden_dims)
-        self.activation = nn.Tanh()
-        self.out = nn.Linear(hidden_dims, 1)
+        self.activation = nn.ReLU()
+        self.out = nn.Sequential(
+            nn.Dropout(.15),
+            nn.Linear(hidden_dims, hidden_dims),
+            self.activation,
+            nn.Dropout(.15),
+            nn.Linear(hidden_dims, 1),
+        )
     
     def forward(self, state, action):
         '''

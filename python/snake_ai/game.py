@@ -43,6 +43,8 @@ class Game:
         self.spawn_fruit()
         self.direction = 1 # can be 1, 2, 3, or 4
         self.dead = False
+        self.age = 0
+        self.score = 0 # fruits eaten
 
     def spawn_fruit(self):
         self.fruitPos = Vector(random.randint(0, self.width-1), random.randint(0, self.height-1))
@@ -116,6 +118,7 @@ class Game:
         elif ate:
             return 10
         else:
+            return 0
             oldDistance = abs(oldHead.x - oldFruit.x) + abs(oldHead.y - oldFruit.y)
             newDistance = abs(newHead.x - newFruit.x) + abs(newHead.y - newFruit.y)
             return oldDistance - newDistance
@@ -163,6 +166,8 @@ class Game:
             if ate:
                 self.tailLength += 1
                 self.spawn_fruit()
+                self.score += 1
+            self.age += 1
 
             # check if you've died
             self.dead = self.dead or self.is_eating_tail(self.tail[-1]) or not self.is_in_bounds(self.tail[-1])
@@ -184,6 +189,8 @@ class Game:
         ans.fruitPos = self.fruitPos.copy()
         ans.direction = self.direction  # can be 1, 2, 3, or 4
         ans.dead = self.dead
+        ans.age = self.age
+        ans.score = self.score
         return ans
     
     def check_move(self, newDirection):
@@ -196,6 +203,8 @@ class Game:
             return reward
         return max(range(5), key=key)
 
+    def status(self):
+        return 'age: {}, score: {}'.format(self.age, self.score)
 class VisibleGame(Game):
     '''
     a game that is rendered on screen
