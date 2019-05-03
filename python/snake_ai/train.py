@@ -121,4 +121,4 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.00
 
 if __name__ == '__main__':
     # train(12, 4, num_epochs=10, use_critic=True, exploration_rate=1)
-    train(12, 4, num_epochs=100, use_critic=False, load=False, exploration_rate=0)
+    train(12, 4, num_epochs=500, use_critic=False, load=False, exploration_rate=0)

@@ -16,7 +16,7 @@ def run_model(q=False):
         state = state_to_tensor(game.return_state())
         gameOver = False
 
-        for t in range(100):
+        for t in range(1000):
             if show:
                 game.draw()
                 time.sleep(1/5)
