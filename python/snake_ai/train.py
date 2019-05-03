@@ -3,13 +3,16 @@ from model import *
 from game import *
 from utils import *
 
-def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1, num_epochs=10, use_critic=False, batch_size=500):
+def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.005, num_epochs=10, use_critic=True, batch_size=500, load=False):
     # agent and environment
     actor = Actor(state_size, num_actions).to(device)
-    actor_optimizer = torch.optim.SGD(actor.parameters(), lr=lr)
+    actor_optimizer = torch.optim.Adam(actor.parameters(), lr=lr/10)
     critic = Critic(state_size, num_actions).to(device)
     critic_loss = nn.MSELoss()
-    critic_optimizer = torch.optim.SGD(critic.parameters(), lr=lr)
+    critic_optimizer = torch.optim.Adam(critic.parameters(), lr=lr)
+    if load:
+        actor = load_model('actor')
+        critic = load_model('critic')
     
     memory = [] # [(state, action index, next state, reward), ...]
 
@@ -41,7 +44,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         '''
         play the game and remember what happened
         '''
-        game = Game(20,20)
+        game = Game(10,10)
         # playing vars
         state = state_to_tensor(game.return_state())
         reward = 0
@@ -50,7 +53,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         actor_losses = []
         critic_losses = []
 
-        for t in range(20):
+        for t in range(200):
             if show:
                 print()
                 print(game)
@@ -89,6 +92,9 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
             memory.append((state, action_index, nextState, reward))
             # update state
             state = nextState
+        print(game.status())
+        save_model(actor, 'actor')
+        save_model(critic, 'critic')
         avg_actor_loss = sum(actor_losses) / max(1, len(actor_losses))
         avg_critic_loss = sum(critic_losses) / len(critic_losses)
         return avg_actor_loss, avg_critic_loss
@@ -105,7 +111,7 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
         mem_loss = 'N/A'
         if use_critic:
             mem_loss = train_on_memory(batch_size)
-        if (epoch + 1) % max(1,(num_epochs // 10)) == 0:
+        if True: #(epoch + 1) % max(1,(num_epochs // 10)) == 0:
             print('episode losses at epoch {}:\n\tactor: {}\n\tcritic: {}\n\tcritic batch: {}'.format(
                 epoch+1, avg_actor_loss, avg_critic_loss, mem_loss))
 
@@ -114,4 +120,5 @@ def train(state_size, num_actions, exploration_rate=.05, discount_rate=.9, lr=.1
     return actor, critic
 
 if __name__ == '__main__':
-    train(6, 5, num_epochs=100, use_critic=False)
+    # train(12, 4, num_epochs=10, use_critic=True, exploration_rate=1)
+    train(12, 4, num_epochs=100, use_critic=False, load=False, exploration_rate=0)
