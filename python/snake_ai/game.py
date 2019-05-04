@@ -2,6 +2,7 @@ import random
 from graphics import *
 import keyboard
 import time
+import p5
 
 
 class Vector:
@@ -215,57 +216,52 @@ class VisibleGame(Game):
     a game that is rendered on screen
     '''
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, run=True, **kwargs):
         super().__init__(*args, **kwargs)
-        self.window_width = 500
-        self.window_height = 500
-        self.win = GraphWin("Snake", self.window_width, self.window_height)
+        self.window_width = 250
+        self.window_height = 250
         self.rect_width = self.window_width / self.width
         self.rect_height = self.window_height / self.height
+        if run:
+            p5.run(self.setup, self.draw, 5)
+
+    def setup(self):
+        p5.size(self.window_width, self.window_height)
+        p5.background(0)
+        p5.no_loop()
 
     def draw_rectangle_at(self, r, c, color):
-        p1 = Point(c*self.rect_width, r*self.rect_height)
-        p2 = Point((c+1)*self.rect_width, (r+1)*self.rect_height)
-        r = Rectangle(p1, p2)
-        r.setFill(color)
-        r.setWidth(1)
-        r.setOutline('black')
-        r.draw(self.win)
+        p1 = Vector(c*self.rect_width, r*self.rect_height)
+        p2 = Vector((c+1)*self.rect_width, (r+1)*self.rect_height)
+        p5.fill(*color)
+        p5.rect((p1.x, p1.y), self.rect_width, self.rect_height)
 
     def draw_background(self):
-        b = Rectangle(Point(0, 0), Point(
-            self.window_width, self.window_height))
-        b.setFill('gray')
-        b.draw(self.win)
-        # for r in range(self.height):
-        #     for c in range(self.width):
-        #         self.draw_rectangle_at(r, c, 'gray')
+        p5.background(52)
 
     def draw_tail(self):
         for position in self.tail:
             c = position.x
             r = position.y
-            self.draw_rectangle_at(r, c, 'white')
+            self.draw_rectangle_at(r, c, (255,))
 
     def draw_fruit(self):
         c = self.fruitPos.x
         r = self.fruitPos.y
-        self.draw_rectangle_at(r, c, 'red')
+        self.draw_rectangle_at(r, c, (255,0,0))
 
     def draw(self):
+        print(random.randint(0, 1))
+        print(self.direction)
         self.draw_background()
         self.draw_tail()
         self.draw_fruit()
 
-    def close(self):
-        self.win.close()
-
-
 class PlayableGame(VisibleGame):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         keyboard.on_press(self.key_listener)
         self.keyQueue = []
+        super().__init__(*args, **kwargs)
 
     def key_listener(self, ke):
         self.keyQueue.append(ke.name)
@@ -287,18 +283,14 @@ class PlayableGame(VisibleGame):
             self.handle_keypress('')
         for i in range(len(self.keyQueue)):
             self.handle_keypress(self.keyQueue.pop(0))
-        self.draw()
+    
+    def draw(self):
+        self.update()
+        super().draw()
+
+
 
 
 if __name__ == '__main__':
+    global vg
     vg = PlayableGame(10, 10)
-    # vg.draw()
-    # vg.win.getMouse()
-    # vg.move_player(0)
-    # vg.close()
-    for t in range(1000):
-        # move = random.randint(0,4)
-        # vg.move_player(move)
-        # vg.draw()
-        vg.update()
-        time.sleep(1/5)
