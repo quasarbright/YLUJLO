@@ -22,6 +22,6 @@ def save_model(model, name):
     torch.save(model, path(name))
 
 def load_model(name):
-    model = torch.load(path(name))
+    model = torch.load(path(name), map_location=device)
     model.eval()
     return model
