@@ -9,7 +9,7 @@ public class BoidfriendBehavior : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.velocity = new Vector3(1, 1, 0);
+        rb.velocity = Random.onUnitSphere;
     }
 
     void FixedUpdate()

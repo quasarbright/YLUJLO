@@ -19,6 +19,10 @@ public class FieldOfView : MonoBehaviour
 
     bool IsVisible(GameObject boid)
     {
+        if(object.ReferenceEquals(this, boid))
+        {
+            return false;
+        }
         Vector3 pos = boid.transform.position;
         Vector3 disp = pos - transform.position;
         Vector3 vel = rb.velocity;
@@ -28,6 +32,8 @@ public class FieldOfView : MonoBehaviour
 
     public List<GameObject> GetVisibleBoids()
     {
+        PopulationBehavior popBehavior = population.GetComponent<PopulationBehavior>();
+        boids = popBehavior.boids;
         List<GameObject> ans = new List<GameObject>();
         foreach (GameObject boid in boids)
         {

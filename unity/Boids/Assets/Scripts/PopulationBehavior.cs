@@ -18,6 +18,7 @@ public class PopulationBehavior : MonoBehaviour
         {
             Vector3 pos = SpawnPoint();
             GameObject boidObj = Instantiate(boidPrefab, pos, transform.rotation);
+            boids[i] = boidObj;
         }
     }
 
@@ -29,11 +30,11 @@ public class PopulationBehavior : MonoBehaviour
         float width = boundingCube.transform.lossyScale.z;
         float height = boundingCube.transform.lossyScale.y;
         xmin = pos.x - length / 2f;
-        xmax = pos.x - length / 2f;
+        xmax = pos.x + length / 2f;
         zmin = pos.z - width / 2f;
-        zmax = pos.z - width / 2f;
+        zmax = pos.z + width / 2f;
         ymin = pos.y - height / 2f;
-        ymax = pos.y - height / 2f;
+        ymax = pos.y + height / 2f;
 
         return new Vector3(Random.Range(xmin, xmax), Random.Range(ymin, ymax), Random.Range(zmin, zmax));
     }
