@@ -20,9 +20,10 @@ public class FieldOfView : MonoBehaviour
     bool IsVisible(GameObject boid)
     {
         Vector3 pos = boid.transform.position;
-        Vector3 disp = 
+        Vector3 disp = pos - transform.position;
         Vector3 vel = rb.velocity;
-        float dot = Vector3.Dot(vel, )
+        float dot = Vector3.Dot(vel, disp);
+        return dot >= 0f;
     }
 
     public List<GameObject> GetVisibleBoids()
