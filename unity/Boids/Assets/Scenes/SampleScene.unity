@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 164285385}
   - component: {fileID: 164285383}
   - component: {fileID: 164285382}
+  - component: {fileID: 164285389}
   m_Layer: 0
   m_Name: boidfriend
   m_TagString: Untagged
@@ -152,14 +153,14 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 164285379}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 0.02
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &164285381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   population: {fileID: 1523985793}
-  radius: 2
+  radius: 10
 --- !u!114 &164285382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,6 +187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db47eaaef56df444895cd4e5361651ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  strength: 1
 --- !u!114 &164285383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,6 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 435310fbc10309b419478ee05e4d95c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  strength: 1
 --- !u!114 &164285384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,6 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e002429f94eeeb34dafa8dc6d4130a43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boundingCube: {fileID: 970107089}
 --- !u!114 &164285385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 968f2b9a9b58a5a479374da4458ffded, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  strength: 10
 --- !u!23 &164285386
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -283,6 +288,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &164285389
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164285379}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_Mesh: {fileID: 4300000, guid: 1f6e6a740de94d4479fd2dce9348651d, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,6 +566,7 @@ GameObject:
   - component: {fileID: 970107092}
   - component: {fileID: 970107091}
   - component: {fileID: 970107090}
+  - component: {fileID: 970107094}
   m_Layer: 0
   m_Name: bounding box
   m_TagString: Untagged
@@ -562,8 +582,8 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 970107089}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
+  m_IsTrigger: 0
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -622,11 +642,27 @@ Transform:
   m_GameObject: {fileID: 970107089}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20.557, y: 10.2785, z: 10.2785}
+  m_LocalScale: {x: 88.3537, y: 44.17685, z: 44.17685}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &970107094
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970107089}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 1
 --- !u!1 &1523985793
 GameObject:
   m_ObjectHideFlags: 0
@@ -657,7 +693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boidPrefab: {fileID: 164285379}
-  popSize: 10
+  popSize: 100
   boundingCube: {fileID: 970107089}
   boids: []
 --- !u!4 &1523985795

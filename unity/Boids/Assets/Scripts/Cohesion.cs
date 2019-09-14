@@ -5,13 +5,14 @@ using UnityEngine;
 [RequireComponent(typeof(FieldOfView))]
 public class Cohesion : MonoBehaviour
 {
-    Rigidbody rigidbody;
+    public float strength = 10f;
+    Rigidbody rb;
     FieldOfView fieldOfView;
 
     // Start is called before the first frame update
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         fieldOfView = GetComponent<FieldOfView>();
     }
 
@@ -23,12 +24,12 @@ public class Cohesion : MonoBehaviour
         {
             resultant += boid.transform.position;
         }
-        return (resultant /= boidObjs.Count()) - transform.position;
+        return (resultant /= boidObjs.Count) - transform.position;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        rb.AddForce(CalcForce());
+        rb.AddForce(CalcForce() * strength);
     }
 }
