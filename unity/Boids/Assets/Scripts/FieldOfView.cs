@@ -31,7 +31,10 @@ public class FieldOfView : MonoBehaviour
         List<GameObject> ans = new List<GameObject>();
         foreach (GameObject boid in boids)
         {
-            
+            if(IsVisible(boid))
+            {
+                ans.Add(boid);
+            }
         }
         return ans;
     }
