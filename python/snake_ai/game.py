@@ -252,8 +252,8 @@ class VisibleGame(Game):
         self.draw_rectangle_at(r, c, (255,0,0))
 
     def draw(self):
-        print(random.randint(0, 1))
-        print(self.direction)
+        # print(random.randint(0, 1))
+        # print(self.direction)
         self.draw_background()
         self.draw_tail()
         self.draw_fruit()

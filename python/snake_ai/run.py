@@ -25,9 +25,7 @@ def run_model(q=False):
                 game.draw()
             # play an episode
             if gameOver:
-                print('DEATH')
-                print('DEATH')
-                print('DEATH')
+                print(game.status())
                 p5.exit()
             if not q:
                 action_logprob, action_index = actor.choose_action(state)
