@@ -6,7 +6,9 @@ import p5
 
 def run_model(q=False):
     actor = load_model('actor')
+    actor.eval()
     critic = load_model('critic')
+    critic.eval()
 
     def run_episode(show=True):
         '''

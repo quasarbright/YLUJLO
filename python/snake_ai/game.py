@@ -1,5 +1,5 @@
 import random
-from graphics import *
+# from graphics import *
 import keyboard
 import time
 import p5
@@ -223,7 +223,8 @@ class VisibleGame(Game):
         self.rect_width = self.window_width / self.width
         self.rect_height = self.window_height / self.height
         if run:
-            p5.run(self.setup, self.draw, 5)
+            p5.frame_rate = 1
+            p5.run(self.setup, self.draw, 5, frame_rate=1)
 
     def setup(self):
         p5.size(self.window_width, self.window_height)
@@ -256,6 +257,7 @@ class VisibleGame(Game):
         self.draw_background()
         self.draw_tail()
         self.draw_fruit()
+        time.sleep(3/60)
 
 class PlayableGame(VisibleGame):
     def __init__(self, *args, **kwargs):
