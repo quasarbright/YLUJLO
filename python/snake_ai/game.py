@@ -118,17 +118,18 @@ class Game:
         elif ate:
             return 10
         else:
-            return 0
-            oldDistance = abs(oldHead.x - oldFruit.x) + \
-                abs(oldHead.y - oldFruit.y)
-            newDistance = abs(newHead.x - newFruit.x) + \
-                abs(newHead.y - newFruit.y)
-            return oldDistance - newDistance
+            return -0.01
+            # oldDistance = abs(oldHead.x - oldFruit.x) + \
+            #     abs(oldHead.y - oldFruit.y)
+            # newDistance = abs(newHead.x - newFruit.x) + \
+            #     abs(newHead.y - newFruit.y)
+            # return oldDistance - newDistance
 
     def move_player(self, newDirection):
         '''
         direction is 0, 1, 2, or 3, or 4
         nothing, right, up, left, down
+        returns reward, nextState, isDead
         '''
         # assert newDirection in [0,1,2,3,4]
         if not self.dead:
@@ -208,7 +209,7 @@ class Game:
         return max(range(5), key=key)
 
     def status(self):
-        return 'age: {}, score: {}'.format(self.age, self.score)
+        return {"age": self.age, "score": self.score}
 
 
 class VisibleGame(Game):

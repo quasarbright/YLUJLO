@@ -3,14 +3,18 @@ from model import *
 from game import *
 from utils import *
 
-REINFORCE = 'REINFORCE'
-ACTOR_CRITIC = 'ACTOR_CRITIC'
-Q_BASIC = 'Q_BASIC'
 
-def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.005, num_epochs=10, mode=REINFORCE, batch_size=100, load=False):
-    if (exploration_rate != 0) and (mode in [REINFORCE, ACTOR_CRITIC]):
-        print("================WARNING================")
-        print("using non-zero exploration with a reinforce agent is weird")
+
+def train(state_size, num_actions, discount_rate=.9, lr=.005, num_epochs=10, mode=REINFORCE, batch_size=100, load=False):
+    # if (exploration_rate != 0) and (mode in [REINFORCE, ACTOR_CRITIC]):
+    #     print("================WARNING================")
+    #     print("using non-zero exploration with a reinforce agent is weird")
+    exploration_rate = 1
+    # desired behavior: by the last epoch, exploration rate = final exploration rate
+    # e_t = e_0 * r ^ (t - 1)
+    # e_E = e_f => r = (e_f / e_0) ^ (1 / (E-1))
+    # where E = num_epochs
+    # r = expl_factor
     # agent and environment
     actor = Actor(state_size, num_actions).to(device)
     actor_optimizer = torch.optim.Adam(actor.parameters(), lr=lr/10)
@@ -51,6 +55,7 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.00
         '''
         play the game and remember what happened
         '''
+        nonlocal exploration_rate
         game = Game(10,10)
         # playing vars
         state = state_to_tensor(game.return_state())
@@ -70,12 +75,12 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.00
             # play an episode
             if gameOver:
                 break
+            should_explore = random.random() < exploration_rate
             if mode in [REINFORCE, ACTOR_CRITIC]:
                 action_logprob, action_index = actor.choose_action(state)
-                should_explore = random.random() < exploration_rate
             elif mode == Q_BASIC:
                 action_index = critic.choose_action(state)
-            if should_explore:
+            if should_explore and mode == Q_BASIC:
                 # sometimes, do a random action just to see what happens
                 action_logprob, action_index = torch.tensor(1 / num_actions).to(device), batch_action(random.randint(0, num_actions-1))
             # observe next state and collect reward
@@ -86,7 +91,7 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.00
             critic_loss = update_critic(state, action_index, nextState, reward)
             critic_losses.append(critic_loss)
 
-            if not should_explore:
+            if (not should_explore) or mode in [REINFORCE, ACTOR_CRITIC]:
                 # backprop rewards to actor
                 rewards.append(reward)
                 if mode in [REINFORCE, ACTOR_CRITIC]:
@@ -110,13 +115,20 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.00
                 values.insert(0,R)
             for logprob, value in zip(action_logprobs, values):
                 actor.zero_grad()
-                score = logprob * (value.detach())
+                if mode == ACTOR_CRITIC:
+                    value = value.detach()
+                score = logprob * (value)
+                # detach because you don't want grad going into the critic for this
+                # you already backpropped the current sars in the critic
                 loss = -score
                 loss.backward()
                 actor_optimizer.step()
                 discounted_actor_losses.append(loss)
         # actor.zero_grad()
-        total_actor_loss = torch.cat(discounted_actor_losses).sum()
+        if len(discounted_actor_losses) != 0:
+            total_actor_loss = torch.cat(discounted_actor_losses).sum()
+        else:
+            total_actor_loss = 0
         # total_actor_loss.backward()
         # actor_optimizer.step()
         print(game.status())
@@ -139,7 +151,7 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.00
         if mode in [ACTOR_CRITIC, Q_BASIC]:
             mem_loss = train_on_memory(batch_size)
         if True: #(epoch + 1) % max(1,(num_epochs // 10)) == 0:
-            print('episode losses at epoch {}:\n\tactor: {}\n\tcritic: {}\n\tcritic batch: {}'.format(
+            print('episode losses at epoch {}:\n\tactor: {}\n\tcritic: {}\n\tcritic on memories: {}'.format(
                 epoch+1, avg_actor_loss, avg_critic_loss, mem_loss))
 
     save_model(actor, 'actor')
@@ -148,4 +160,4 @@ def train(state_size, num_actions, exploration_rate=.1, discount_rate=.9, lr=.00
 
 if __name__ == '__main__':
     # train(12, 4, num_epochs=10, use_critic=True, exploration_rate=1)
-    train(12, 4, num_epochs=200, mode=ACTOR_CRITIC, load=False, exploration_rate=0, discount_rate=.1)
+    train(12, 4, num_epochs=200, mode=ACTOR_CRITIC, load=False, discount_rate=.1)

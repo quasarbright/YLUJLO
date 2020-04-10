@@ -1,5 +1,9 @@
 import torch
 
+REINFORCE = 'REINFORCE'
+ACTOR_CRITIC = 'ACTOR_CRITIC'
+Q_BASIC = 'Q_BASIC'
+
 device = 'cpu'
 if torch.cuda.is_available():
     device = 'cuda'
