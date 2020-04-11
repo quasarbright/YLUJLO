@@ -5,11 +5,10 @@ from utils import *
 
 
 
-def train(state_size, num_actions, discount_rate=.9, lr=.005, num_epochs=10, mode=REINFORCE, batch_size=100, load=False):
+def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.005, num_epochs=10, mode=REINFORCE, batch_size=100, load=False):
     # if (exploration_rate != 0) and (mode in [REINFORCE, ACTOR_CRITIC]):
     #     print("================WARNING================")
     #     print("using non-zero exploration with a reinforce agent is weird")
-    exploration_rate = 1
     # desired behavior: by the last epoch, exploration rate = final exploration rate
     # e_t = e_0 * r ^ (t - 1)
     # e_E = e_f => r = (e_f / e_0) ^ (1 / (E-1))
@@ -34,13 +33,11 @@ def train(state_size, num_actions, discount_rate=.9, lr=.005, num_epochs=10, mod
         value = critic(state, action_index)
 
         # find best next move according to critic
-        max_next_action = batch_action(0)
         max_next_value = critic(nextState, batch_action(0))
         for next_action in range(1, num_actions):
             next_action = batch_action(next_action)
             next_value = critic(nextState, next_action)
             if next_value > max_next_value:
-                max_next_action = next_action
                 max_next_value = next_value
 
         # update critic
@@ -62,13 +59,12 @@ def train(state_size, num_actions, discount_rate=.9, lr=.005, num_epochs=10, mod
         reward = 0
         gameOver = False
 
-        actor_losses = []
         critic_losses = []
 
         action_logprobs = []
         rewards = [] # only rewards from the actor's moves
         qs = [] # predicted rewards from the critic
-        for t in range(200):
+        for _ in range(200):
             if show:
                 print()
                 print(game)
@@ -160,4 +156,4 @@ def train(state_size, num_actions, discount_rate=.9, lr=.005, num_epochs=10, mod
 
 if __name__ == '__main__':
     # train(12, 4, num_epochs=10, use_critic=True, exploration_rate=1)
-    train(12, 4, num_epochs=200, mode=ACTOR_CRITIC, load=False, discount_rate=.1)
+    train(12, 4, num_epochs=200, exploration_rate=.5, mode=ACTOR_CRITIC, load=False, discount_rate=.1)

@@ -36,4 +36,4 @@ def eval(mode, num_episodes):
     return {"avg_age": avg_age, "avg_score":avg_scores}
 
 if __name__ == '__main__':
-    print(eval(Q_BASIC, 10))
+    print(eval(Q_BASIC, 50))

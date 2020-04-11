@@ -4,7 +4,7 @@ from utils import *
 from game import VisibleGame
 import p5
 
-def run_model(q=False):
+def run_model(mode):
     actor = load_model('actor')
     actor.eval()
     critic = load_model('critic')
@@ -27,12 +27,12 @@ def run_model(q=False):
             if gameOver:
                 print(game.status())
                 p5.exit()
-            if not q:
-                action_logprob, action_index = actor.choose_action(state)
+            if mode in [REINFORCE, ACTOR_CRITIC]:
+                _, action_index = actor.choose_action(state)
             else:
                 action_index = critic.choose_action(state)
             # observe next state and collect reward
-            reward, nextState, gameOver = game.move_player(action_index)
+            _, nextState, gameOver = game.move_player(action_index)
             # print(reward)
             nextState = state_to_tensor(nextState)
             # update state
@@ -41,4 +41,4 @@ def run_model(q=False):
     run_episode()
 
 if __name__ == '__main__':
-    run_model(q=False)
+    run_model(Q_BASIC)
