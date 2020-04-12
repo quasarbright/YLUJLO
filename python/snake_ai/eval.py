@@ -3,9 +3,9 @@ from model import *
 from game import Game
 
 def eval(mode, num_episodes):
-    actor = load_model('actor')
+    actor = load_model('actor_{}'.format(mode))
     actor.eval()
-    critic = load_model('critic')
+    critic = load_model('critic_{}'.format(mode))
     critic.eval()
 
     def run_episode():

@@ -6,6 +6,7 @@ from utils import *
 
 
 def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.005, num_epochs=10, mode=REINFORCE, batch_size=100, load=False):
+    print(locals())
     # if (exploration_rate != 0) and (mode in [REINFORCE, ACTOR_CRITIC]):
     #     print("================WARNING================")
     #     print("using non-zero exploration with a reinforce agent is weird")
@@ -21,8 +22,8 @@ def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.00
     critic_loss = nn.MSELoss()
     critic_optimizer = torch.optim.Adam(critic.parameters(), lr=lr)
     if load:
-        actor = load_model('actor')
-        critic = load_model('critic')
+        actor = load_model('actor_{}'.format(mode))
+        critic = load_model('critic_{}'.format(mode))
     
     memory = [] # [(state, action index, next state, reward), ...]
 
@@ -128,8 +129,8 @@ def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.00
         # total_actor_loss.backward()
         # actor_optimizer.step()
         print(game.status())
-        save_model(actor, 'actor')
-        save_model(critic, 'critic')
+        save_model(actor, 'actor_{}'.format(mode))
+        save_model(critic, 'critic_{}'.format(mode))
         avg_actor_loss = total_actor_loss / max(1, len(discounted_actor_losses))
         avg_critic_loss = sum(critic_losses) / len(critic_losses)
         return avg_actor_loss, avg_critic_loss
@@ -150,10 +151,10 @@ def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.00
             print('episode losses at epoch {}:\n\tactor: {}\n\tcritic: {}\n\tcritic on memories: {}'.format(
                 epoch+1, avg_actor_loss, avg_critic_loss, mem_loss))
 
-    save_model(actor, 'actor')
-    save_model(critic, 'critic')
+    save_model(actor, 'actor_{}'.format(mode))
+    save_model(critic, 'critic_{}'.format(mode))
     return actor, critic
 
 if __name__ == '__main__':
     # train(12, 4, num_epochs=10, use_critic=True, exploration_rate=1)
-    train(12, 4, num_epochs=200, exploration_rate=.5, mode=ACTOR_CRITIC, load=False, discount_rate=.1)
+    train(12, 4, num_epochs=200, exploration_rate=.5, mode=Q_BASIC, load=False, discount_rate=.1)
