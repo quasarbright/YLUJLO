@@ -61,6 +61,7 @@ def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.00
         gameOver = False
 
         critic_losses = []
+        actor_losses = []
 
         action_logprobs = []
         rewards = [] # only rewards from the actor's moves
@@ -84,6 +85,13 @@ def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.00
             reward, nextState, gameOver = game.move_player(action_index)
             nextState = state_to_tensor(nextState)
             q = critic(state, action_index)
+
+            if mode == ACTOR_CRITIC:
+                score = q * action_logprob
+                loss = -score
+                loss.backward()
+                actor_optimizer.step()
+                actor_losses.append(loss)
             
             critic_loss = update_critic(state, action_index, nextState, reward)
             critic_losses.append(critic_loss)
@@ -102,28 +110,21 @@ def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.00
             state = nextState
         # replay memories for actor
         values = [] # future-discounted rewards
-        discounted_actor_losses = []
         R = 0
-        if mode in [REINFORCE, ACTOR_CRITIC]:
-            if mode == ACTOR_CRITIC:
-                rewards = qs
+        if mode == REINFORCE:
             for reward in rewards[::-1]:
                 R = reward + discount_rate * R
                 values.insert(0,R)
             for logprob, value in zip(action_logprobs, values):
                 actor.zero_grad()
-                if mode == ACTOR_CRITIC:
-                    value = value.detach()
-                score = logprob * (value)
-                # detach because you don't want grad going into the critic for this
-                # you already backpropped the current sars in the critic
+                score = logprob * value
                 loss = -score
                 loss.backward()
                 actor_optimizer.step()
-                discounted_actor_losses.append(loss)
+                actor_losses.append(loss)
         # actor.zero_grad()
-        if len(discounted_actor_losses) != 0:
-            total_actor_loss = torch.cat(discounted_actor_losses).sum()
+        if len(actor_losses) != 0:
+            total_actor_loss = torch.cat(actor_losses).sum()
         else:
             total_actor_loss = 0
         # total_actor_loss.backward()
@@ -131,7 +132,7 @@ def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.00
         print(game.status())
         save_model(actor, 'actor_{}'.format(mode))
         save_model(critic, 'critic_{}'.format(mode))
-        avg_actor_loss = total_actor_loss / max(1, len(discounted_actor_losses))
+        avg_actor_loss = total_actor_loss / max(1, len(actor_losses))
         avg_critic_loss = sum(critic_losses) / len(critic_losses)
         return avg_actor_loss, avg_critic_loss
 
@@ -157,4 +158,4 @@ def train(state_size, num_actions, discount_rate=.9, exploration_rate=.5, lr=.00
 
 if __name__ == '__main__':
     # train(12, 4, num_epochs=10, use_critic=True, exploration_rate=1)
-    train(12, 4, num_epochs=200, exploration_rate=.5, mode=Q_BASIC, load=False, discount_rate=.1)
+    train(12, 4, num_epochs=200, exploration_rate=.5, mode=Q_BASIC, load=False, discount_rate=.1, batch_size=250)

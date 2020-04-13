@@ -3,6 +3,7 @@ from model import *
 from game import Game
 
 def eval(mode, num_episodes):
+    print(mode)
     actor = load_model('actor_{}'.format(mode))
     actor.eval()
     critic = load_model('critic_{}'.format(mode))
@@ -13,7 +14,7 @@ def eval(mode, num_episodes):
         # playing vars
         gameOver = False
         state = game.return_state()
-        for t in range(1000):
+        for t in range(300):
             if gameOver:
                 break
             state_ = state_to_tensor(state)
@@ -36,4 +37,4 @@ def eval(mode, num_episodes):
     return {"avg_age": avg_age, "avg_score":avg_scores}
 
 if __name__ == '__main__':
-    print(eval(Q_BASIC, 50))
+    print(eval(ACTOR_CRITIC, 50))
